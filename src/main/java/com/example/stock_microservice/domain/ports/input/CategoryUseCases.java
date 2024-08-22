@@ -1,10 +1,10 @@
-package com.example.stock_microservice.application.ports.input;
+package com.example.stock_microservice.domain.ports.input;
 
 import com.example.stock_microservice.domain.models.Category;
 
 import java.util.List;
 
-public interface CategoryServicePort {
+public interface CategoryUseCases {
     Category createCategory(Category category);
     List<Category> getAll();
 }

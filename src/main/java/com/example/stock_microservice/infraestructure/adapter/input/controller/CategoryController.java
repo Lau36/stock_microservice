@@ -3,6 +3,8 @@ package com.example.stock_microservice.infraestructure.adapter.input.controller;
 import com.example.stock_microservice.application.services.CategoryService;
 import com.example.stock_microservice.domain.models.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +16,14 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
-        return categoryService.createCategory(category);
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        Category createdCategory = categoryService.createCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
 
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryService.getAll();
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> ListOfCategories = categoryService.getAll();
+        return ResponseEntity.status(HttpStatus.OK).body(ListOfCategories);
     }
 }

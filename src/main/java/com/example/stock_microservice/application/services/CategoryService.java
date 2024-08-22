@@ -1,27 +1,28 @@
 package com.example.stock_microservice.application.services;
 
-import com.example.stock_microservice.application.ports.input.CategoryServicePort;
-import com.example.stock_microservice.application.ports.output.CategoryPersistencePort;
+import com.example.stock_microservice.domain.ports.input.CategoryUseCases;
+import com.example.stock_microservice.domain.ports.output.CategoryPersistencePort;
 import com.example.stock_microservice.domain.models.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//Servicio en donde está la implementación de todo
-@Service
-@RequiredArgsConstructor
-public class CategoryService implements CategoryServicePort {
+public class CategoryService implements CategoryUseCases {
 
-    private final CategoryPersistencePort categoryPersistencePort;
+    private final CategoryUseCases categoryUseCases;
+
+    public CategoryService(CategoryUseCases categoryUseCases) {
+        this.categoryUseCases = categoryUseCases;
+    }
 
     @Override
     public Category createCategory(Category category) {
-        return categoryPersistencePort.save(category);
+        return categoryUseCases.createCategory(category);
     }
 
     @Override
     public List<Category> getAll() {
-        return categoryPersistencePort.getAll();
+        return categoryUseCases.getAll();
     }
 }
