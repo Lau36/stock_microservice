@@ -1,4 +1,4 @@
-package com.example.stock_microservice.infraestructure.adapter.output.persistence.entity;
+package com.example.stock_microservice.infrastructure.adapter.output.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

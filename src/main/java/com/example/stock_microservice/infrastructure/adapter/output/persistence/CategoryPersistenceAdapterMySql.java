@@ -1,13 +1,12 @@
-package com.example.stock_microservice.infraestructure.adapter.output.persistence;
+package com.example.stock_microservice.infrastructure.adapter.output.persistence;
 
 import com.example.stock_microservice.domain.ports.output.CategoryPersistencePort;
 import com.example.stock_microservice.domain.models.Category;
-import com.example.stock_microservice.infraestructure.adapter.output.persistence.entity.CategoryEntity;
-import com.example.stock_microservice.infraestructure.adapter.output.persistence.exceptions.AlreadyExistsException;
-import com.example.stock_microservice.infraestructure.adapter.output.persistence.mapper.CategoryMapper;
-import com.example.stock_microservice.infraestructure.adapter.output.persistence.repository.CategoryRepository;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.CategoryEntity;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.exceptions.AlreadyExistsException;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.CategoryMapper;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 

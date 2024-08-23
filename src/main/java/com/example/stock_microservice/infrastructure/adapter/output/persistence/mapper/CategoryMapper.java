@@ -1,7 +1,7 @@
-package com.example.stock_microservice.infraestructure.adapter.output.persistence.mapper;
+package com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper;
 
 import com.example.stock_microservice.domain.models.Category;
-import com.example.stock_microservice.infraestructure.adapter.output.persistence.entity.CategoryEntity;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.CategoryEntity;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 

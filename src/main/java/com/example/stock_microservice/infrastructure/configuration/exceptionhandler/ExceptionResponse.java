@@ -1,4 +1,4 @@
-package com.example.stock_microservice.infraestructure.configuration.exceptionhandler;
+package com.example.stock_microservice.infrastructure.configuration.exceptionhandler;
 
 import java.time.LocalDateTime;
 

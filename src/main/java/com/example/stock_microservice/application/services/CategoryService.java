@@ -1,10 +1,7 @@
 package com.example.stock_microservice.application.services;
 
 import com.example.stock_microservice.domain.ports.input.CategoryUseCases;
-import com.example.stock_microservice.domain.ports.output.CategoryPersistencePort;
 import com.example.stock_microservice.domain.models.Category;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

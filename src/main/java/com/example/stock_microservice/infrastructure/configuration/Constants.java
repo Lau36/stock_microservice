@@ -1,4 +1,4 @@
-package com.example.stock_microservice.infraestructure.configuration;
+package com.example.stock_microservice.infrastructure.configuration;
 
 public class Constants {
     private Constants() {
