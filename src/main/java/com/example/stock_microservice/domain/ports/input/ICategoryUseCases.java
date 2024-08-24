@@ -4,7 +4,7 @@ import com.example.stock_microservice.domain.models.Category;
 
 import java.util.List;
 
-public interface CategoryUseCases {
+public interface ICategoryUseCases {
     Category createCategory(Category category);
     List<Category> getAll();
 }

@@ -1,4 +1,4 @@
-package com.example.stock_microservice.domain.Utils;
+package com.example.stock_microservice.utils;
 
 public class DomainConstants {
     private DomainConstants() {

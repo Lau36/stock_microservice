@@ -1,15 +1,15 @@
 package com.example.stock_microservice.application.services;
 
-import com.example.stock_microservice.domain.ports.input.CategoryUseCases;
+import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import com.example.stock_microservice.domain.models.Category;
 
 import java.util.List;
 
-public class CategoryService implements CategoryUseCases {
+public class CategoryService implements ICategoryUseCases {
 
-    private final CategoryUseCases categoryUseCases;
+    private final ICategoryUseCases categoryUseCases;
 
-    public CategoryService(CategoryUseCases categoryUseCases) {
+    public CategoryService(ICategoryUseCases categoryUseCases) {
         this.categoryUseCases = categoryUseCases;
     }
 

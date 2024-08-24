@@ -1,8 +1,8 @@
 package com.example.stock_microservice.infrastructure.configuration.exceptionhandler;
 
-import com.example.stock_microservice.domain.execptions.EmptyFieldException;
-import com.example.stock_microservice.domain.execptions.MaxLengthExceededException;
-import com.example.stock_microservice.infrastructure.adapter.output.persistence.exceptions.AlreadyExistsException;
+import com.example.stock_microservice.infrastructure.adapter.input.exceptions.EmptyFieldException;
+import com.example.stock_microservice.infrastructure.adapter.input.exceptions.MaxLengthExceededException;
+import com.example.stock_microservice.domain.execptions.AlreadyExistsException;
 import com.example.stock_microservice.infrastructure.configuration.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -2,25 +2,25 @@ package com.example.stock_microservice.infrastructure.adapter.output.persistence
 
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.CategoryEntity;
-import com.example.stock_microservice.infrastructure.adapter.output.persistence.exceptions.AlreadyExistsException;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.CategoryMapper;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
- class CategoryPersistenceAdapterMySqlTest {
+class CategoryPersistenceAdapterMySqlTest {
+
     @Mock
     private CategoryRepository categoryRepository;
 
@@ -35,62 +35,65 @@ import static org.mockito.Mockito.*;
 
     @BeforeEach
     void setUp() {
-        category = new Category(1L, "Electronics", "All electronic items");
-        categoryEntity = new CategoryEntity(1L, "Electronics", "All electronic items");
+        category = new Category(1L, "Juguetes niños", "Juguetes para niños de 6 a 12 años");
+        categoryEntity = new CategoryEntity(1L, "Juguetes niños", "Juguetes para niños de 6 a 12 años");
     }
 
     @Test
-    void givenCategory_whenSave_thenReturnSavedCategory() {
-        // Configuración de mocks
-        when(categoryRepository.existsByCategoryName(category.getCategoryName())).thenReturn(false);
+    void testSave() {
         when(categoryMapper.toCategoryEntity(any(Category.class))).thenReturn(categoryEntity);
         when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
         when(categoryMapper.toCategory(any(CategoryEntity.class))).thenReturn(category);
 
-        // Ejecución
         Category savedCategory = categoryPersistenceAdapter.save(category);
 
-        // Verificación
-        verify(categoryRepository).existsByCategoryName(category.getCategoryName());
-        verify(categoryRepository).save(any(CategoryEntity.class));
         verify(categoryMapper).toCategoryEntity(category);
+        verify(categoryRepository).save(categoryEntity);
         verify(categoryMapper).toCategory(categoryEntity);
-        assertEquals(category.getCategoryName(), savedCategory.getCategoryName());
-        assertEquals(category.getCategoryDescription(), savedCategory.getCategoryDescription());
+
+        assertNotNull(savedCategory);
+        assertEquals("Juguetes niños", savedCategory.getCategoryName());
+        assertEquals("Juguetes para niños de 6 a 12 años", savedCategory.getCategoryDescription());
     }
 
     @Test
-    void givenCategoryWithExistingName_whenSave_thenThrowAlreadyExistsException() {
-        // Configuración de mocks
-        when(categoryRepository.existsByCategoryName(category.getCategoryName())).thenReturn(true);
+    void testFindByCategoryName() {
+        when(categoryRepository.findByCategoryName("Juguetes niños")).thenReturn(Optional.of(categoryEntity));
+        when(categoryMapper.toCategory(any(CategoryEntity.class))).thenReturn(category);
 
-        // Verificación y Ejecución
-        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () ->
-                categoryPersistenceAdapter.save(category)
-        );
+        Optional<Category> foundCategory = categoryPersistenceAdapter.findByCategoryName("Juguetes niños");
 
-        assertEquals("The field 'Electronics' already exists", exception.getMessage());
-        verify(categoryRepository).existsByCategoryName(category.getCategoryName());
-        verify(categoryRepository, never()).save(any(CategoryEntity.class));
-        verify(categoryMapper, never()).toCategoryEntity(category);
+        verify(categoryRepository).findByCategoryName("Juguetes niños");
+        verify(categoryMapper).toCategory(categoryEntity);
+
+        assertTrue(foundCategory.isPresent());
+        assertEquals("Juguetes niños", foundCategory.get().getCategoryName());
     }
 
     @Test
-    void givenCategoriesInDatabase_whenGetAll_thenReturnCategoryList() {
-        // Configuración de mocks
-        List<CategoryEntity> categoryEntities = List.of(categoryEntity);
-        List<Category> categories = List.of(category);
+    void testFindByCategoryName_NotFound() {
+        when(categoryRepository.findByCategoryName("NonExisting")).thenReturn(Optional.empty());
 
-        when(categoryRepository.findAll()).thenReturn(categoryEntities);
-        when(categoryMapper.toCategoryList(categoryEntities)).thenReturn(categories);
+        Optional<Category> foundCategory = categoryPersistenceAdapter.findByCategoryName("NonExisting");
 
-        // Ejecución
-        List<Category> result = categoryPersistenceAdapter.getAll();
+        verify(categoryRepository).findByCategoryName("NonExisting");
+        verify(categoryMapper, never()).toCategory(any(CategoryEntity.class));
 
-        // Verificación
+        assertFalse(foundCategory.isPresent());
+    }
+
+    @Test
+    void testGetAll() {
+        when(categoryRepository.findAll()).thenReturn(List.of(categoryEntity));
+        when(categoryMapper.toCategoryList(anyList())).thenReturn(List.of(category));
+
+        List<Category> categories = categoryPersistenceAdapter.getAll();
+
         verify(categoryRepository).findAll();
-        verify(categoryMapper).toCategoryList(categoryEntities);
-        assertEquals(1, result.size());
-        assertEquals(category.getCategoryName(), result.get(0).getCategoryName());
+        verify(categoryMapper).toCategoryList(List.of(categoryEntity));
+
+        assertNotNull(categories);
+        assertEquals(1, categories.size());
+        assertEquals("Juguetes niños", categories.get(0).getCategoryName());
     }
 }

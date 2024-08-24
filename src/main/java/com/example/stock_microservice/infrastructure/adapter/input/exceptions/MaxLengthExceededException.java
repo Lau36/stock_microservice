@@ -1,4 +1,4 @@
-package com.example.stock_microservice.domain.execptions;
+package com.example.stock_microservice.infrastructure.adapter.input.exceptions;
 
 public class MaxLengthExceededException extends RuntimeException {
     public MaxLengthExceededException(String fieldName, int maxLength) {
