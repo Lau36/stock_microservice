@@ -1,5 +1,7 @@
 package com.example.stock_microservice.application.services;
 
+import com.example.stock_microservice.domain.dto.PaginatedCategories;
+import com.example.stock_microservice.domain.dto.PaginationRequest;
 import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import com.example.stock_microservice.domain.models.Category;
 
@@ -21,5 +23,10 @@ public class CategoryService implements ICategoryUseCases {
     @Override
     public List<Category> getAll() {
         return categoryUseCases.getAll();
+    }
+
+    @Override
+    public PaginatedCategories listCategories(PaginationRequest paginationRequest) {
+        return categoryUseCases.listCategories(paginationRequest);
     }
 }

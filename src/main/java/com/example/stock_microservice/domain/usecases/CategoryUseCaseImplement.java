@@ -1,5 +1,7 @@
 package com.example.stock_microservice.domain.usecases;
 
+import com.example.stock_microservice.domain.dto.PaginatedCategories;
+import com.example.stock_microservice.domain.dto.PaginationRequest;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
@@ -25,4 +27,11 @@ public class CategoryUseCaseImplement implements ICategoryUseCases {
     public List<Category> getAll() {
         return categoryPersistencePort.getAll();
     }
+
+    @Override
+    public PaginatedCategories listCategories(PaginationRequest paginationRequest) {
+        return categoryPersistencePort.listCategories(paginationRequest);
+    }
+
+
 }

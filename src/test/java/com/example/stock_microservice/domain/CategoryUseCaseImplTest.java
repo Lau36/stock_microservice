@@ -1,5 +1,8 @@
 package com.example.stock_microservice.domain;
 
+import com.example.stock_microservice.domain.dto.PaginatedCategories;
+import com.example.stock_microservice.domain.dto.PaginationRequest;
+import com.example.stock_microservice.domain.dto.SortDirection;
 import com.example.stock_microservice.domain.execptions.AlreadyExistsException;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
@@ -11,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -73,4 +77,19 @@ import static org.mockito.Mockito.*;
         assertEquals(categoryList, result);
         verify(categoryPersistencePort, times(1)).getAll();
     }
+
+     @Test
+     void testListCategories(){
+         PaginationRequest paginationRequest = new PaginationRequest(0, 10, "categoryName", SortDirection.ASC);
+         Category category1 = new Category(1L, "Juguetes", "Test1");
+         Category category2 = new Category(2L, "Belleza", "Test2");
+         PaginatedCategories paginatedCategories = new PaginatedCategories(Arrays.asList(category1,category2),0,1,2);
+
+         when(categoryPersistencePort.listCategories(paginationRequest)).thenReturn(paginatedCategories);
+
+         PaginatedCategories result = categoryUseCaseImplement.listCategories(paginationRequest);
+
+         assertEquals(paginatedCategories, result);
+         verify(categoryPersistencePort, Mockito.times(1)).listCategories(paginationRequest);
+     }
 }

@@ -82,4 +82,5 @@ class CategoryControllerTest {
         verify(categoryService, Mockito.times(1)).getAll();
         verify(categoryResponseMapper, Mockito.times(1)).toCategoryResponses(categoryList);
     }
+
 }

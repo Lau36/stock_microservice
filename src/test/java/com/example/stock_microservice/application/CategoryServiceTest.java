@@ -1,6 +1,9 @@
 package com.example.stock_microservice.application;
 
 import com.example.stock_microservice.application.services.CategoryService;
+import com.example.stock_microservice.domain.dto.PaginatedCategories;
+import com.example.stock_microservice.domain.dto.PaginationRequest;
+import com.example.stock_microservice.domain.dto.SortDirection;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +56,21 @@ class CategoryServiceTest {
 
         assertEquals(categories, returnedCategories);
         verify( categoryUseCases, Mockito.times(1)).getAll();
+    }
+
+    @Test
+    void testListCategories(){
+        PaginationRequest paginationRequest = new PaginationRequest(0, 10, "categoryName", SortDirection.ASC);
+        Category category1 = new Category(1L, "Juguetes", "Test1");
+        Category category2 = new Category(2L, "Belleza", "Test2");
+        PaginatedCategories paginatedCategories = new PaginatedCategories(Arrays.asList(category1,category2),0,1,2);
+
+        when(categoryUseCases.listCategories(paginationRequest)).thenReturn(paginatedCategories);
+
+        PaginatedCategories result = categoryService.listCategories(paginationRequest);
+
+        assertEquals(paginatedCategories, result);
+        verify(categoryUseCases, Mockito.times(1)).listCategories(paginationRequest);
     }
 
 }
