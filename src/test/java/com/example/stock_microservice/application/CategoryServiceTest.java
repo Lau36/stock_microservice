@@ -34,7 +34,7 @@ class CategoryServiceTest {
 
     @Test
     void testCreateCategory(){
-        Category category = new Category(1l, "TestCategory", "TestDescription");
+        Category category = new Category(1L, "TestCategory", "TestDescription");
         when(categoryUseCases.createCategory(category)).thenReturn(category);
 
         Category returnedCategory = categoryService.createCategory(category);
@@ -46,8 +46,8 @@ class CategoryServiceTest {
 
     @Test
     void testGetAllCategories(){
-        Category category1 = new Category(1l, "TestCategory", "TestDescription");
-        Category category2 = new Category(2l, "TestCategory2", "TestDescription2");
+        Category category1 = new Category(1L, "TestCategory", "TestDescription");
+        Category category2 = new Category(2L, "TestCategory2", "TestDescription2");
         List<Category> categories = Arrays.asList(category1, category2);
 
         when(categoryUseCases.getAll()).thenReturn(categories);
