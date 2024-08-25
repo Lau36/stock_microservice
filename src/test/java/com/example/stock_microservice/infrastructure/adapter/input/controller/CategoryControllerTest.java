@@ -1,6 +1,9 @@
 package com.example.stock_microservice.infrastructure.adapter.input.controller;
 
 import com.example.stock_microservice.application.services.CategoryService;
+import com.example.stock_microservice.domain.dto.PaginatedCategories;
+import com.example.stock_microservice.domain.dto.PaginationRequest;
+import com.example.stock_microservice.domain.dto.SortDirection;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddCategoryRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.CategoryResponse;
@@ -8,10 +11,7 @@ import com.example.stock_microservice.infrastructure.adapter.input.mapper.Catego
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.CategoryResponseMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,6 +82,29 @@ class CategoryControllerTest {
 
         verify(categoryService, Mockito.times(1)).getAll();
         verify(categoryResponseMapper, Mockito.times(1)).toCategoryResponses(categoryList);
+    }
+
+    @Test
+    void testGetAllCategoriesPaginated(){
+        PaginationRequest paginationRequest = new PaginationRequest(0, 10, "categoryName", SortDirection.ASC);
+        Category category1 = new Category(1L, "Juguetes", "Test1");
+        Category category2 = new Category(2L, "Belleza", "Test2");
+        PaginatedCategories paginatedCategories = new PaginatedCategories(Arrays.asList(category1,category2),0,1,2);
+        when(categoryService.listCategories(any(PaginationRequest.class))).thenReturn(paginatedCategories);
+
+        ResponseEntity<PaginatedCategories> response = categoryController.getAllCategoriesPaginated(0,10,"categoryName","asc");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(paginatedCategories, response.getBody());
+
+        //Verifies that the argument passed it´s the correct one
+        ArgumentCaptor<PaginationRequest> captor = ArgumentCaptor.forClass((PaginationRequest.class));
+        verify(categoryService, Mockito.times(1)).listCategories(captor.capture());
+        PaginationRequest capturedRequest = captor.getValue();
+
+        assertEquals(paginationRequest.getPage(), capturedRequest.getPage());
+        assertEquals(paginationRequest.getSize(), capturedRequest.getSize());
+        assertEquals(paginationRequest.getSort(), capturedRequest.getSort());
+        assertEquals(paginationRequest.getSortDirection(), capturedRequest.getSortDirection());
     }
 
 }
