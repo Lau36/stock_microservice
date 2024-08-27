@@ -8,5 +8,6 @@ import org.mapstruct.Mapper;
 public interface BrandMapper {
 
     BrandEntity toBrandEntity(Brand brand);
+
     Brand toBrand(BrandEntity brandEntity);
 }

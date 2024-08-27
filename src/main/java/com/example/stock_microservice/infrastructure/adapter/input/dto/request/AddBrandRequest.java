@@ -23,7 +23,7 @@ public class AddBrandRequest {
             throw new MaxLengthExceededException(DomainConstants.Field.NAME.toString(), 50);
         }
         if(description.length() > 120){
-            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPTION.toString(), 90);
+            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPTION.toString(), 120);
         }
         this.name = requireNonNull(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
         this.description = requireNonNull(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
