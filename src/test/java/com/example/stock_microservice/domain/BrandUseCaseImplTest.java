@@ -32,7 +32,7 @@ class BrandUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         brand = new Brand(1L, "BrandTest1", "Brand test1");
     }
 
@@ -94,6 +94,34 @@ class BrandUseCaseImplTest {
                 .hasMessageContaining(DomainConstants.Field.DESCRIPTION.toString());
 
         verify(brandPersistencePort, never()).save(brand1);
+    }
+
+    @Test
+    void testCreateBrand_shouldNotThrowException_whenNameIsAtMaxLength(){
+        String maxLengthName = "B".repeat(50);
+        Brand brandTest = new Brand(1L, maxLengthName, "Valid description");
+
+        when(brandPersistencePort.findByBrandName(maxLengthName)).thenReturn(Optional.empty());
+        when(brandPersistencePort.save(brandTest)).thenReturn(brandTest);
+
+        Brand result = brandUseCase.createBrand(brandTest);
+
+        assertEquals(brandTest, result);
+        verify(brandPersistencePort, times(1)).save(brandTest);
+    }
+
+    @Test
+    void testCreateBrand_shouldNotThrowException_whenDescriptionIsAtMaxLength(){
+        String maxLengthDescription = "B".repeat(90);
+        Brand brandTest = new Brand(1L, "ValidName", maxLengthDescription);
+
+        when(brandPersistencePort.findByBrandName("ValidName")).thenReturn(Optional.empty());
+        when(brandPersistencePort.save(brandTest)).thenReturn(brandTest);
+
+        Brand result = brandUseCase.createBrand(brandTest);
+
+        assertEquals(brandTest, result);
+        verify(brandPersistencePort, times(1)).save(brandTest);
     }
 
 
