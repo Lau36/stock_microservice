@@ -4,11 +4,14 @@ import com.example.stock_microservice.domain.execptions.AlreadyExistsException;
 import com.example.stock_microservice.domain.models.Brand;
 import com.example.stock_microservice.domain.ports.input.IBrandUseCase;
 import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
+import com.example.stock_microservice.domain.execptions.EmptyFieldException;
+import com.example.stock_microservice.domain.execptions.MaxLengthExceededException;
+import com.example.stock_microservice.utils.DomainConstants;
 
 
 public class BrandUseCaseImpl implements IBrandUseCase {
 
-    private IBrandPersistencePort brandPersistencePort;
+    private final IBrandPersistencePort brandPersistencePort;
 
     public BrandUseCaseImpl(IBrandPersistencePort brandPersistencePort) {
         this.brandPersistencePort = brandPersistencePort;
@@ -16,6 +19,18 @@ public class BrandUseCaseImpl implements IBrandUseCase {
 
     @Override
     public Brand createBrand(Brand brand) {
+        if(brand.getName().trim().isEmpty()){
+            throw new EmptyFieldException( DomainConstants.Field.NAME.toString());
+        }
+        if(brand.getDescription().trim().isEmpty()){
+            throw new EmptyFieldException(DomainConstants.Field.DESCRIPTION.toString() );
+        }
+        if(brand.getName().length() > 50){
+            throw new MaxLengthExceededException(DomainConstants.Field.NAME.toString(), 50);
+        }
+        if(brand.getDescription().length() > 120){
+            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPTION.toString(), 120);
+        }
         if(brandPersistencePort.findByBrandName(brand.getName()).isPresent()){
             throw new AlreadyExistsException("The field '" + brand.getName() + "' already exists");
         }

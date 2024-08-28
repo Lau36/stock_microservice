@@ -1,8 +1,8 @@
 package com.example.stock_microservice.domain;
 
-import com.example.stock_microservice.domain.dto.PaginatedCategories;
-import com.example.stock_microservice.domain.dto.PaginationRequest;
-import com.example.stock_microservice.domain.dto.SortDirection;
+import com.example.stock_microservice.domain.utils.PaginatedCategories;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.SortDirection;
 import com.example.stock_microservice.domain.execptions.AlreadyExistsException;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;

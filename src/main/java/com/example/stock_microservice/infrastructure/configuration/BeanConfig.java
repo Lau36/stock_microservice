@@ -15,6 +15,7 @@ import com.example.stock_microservice.infrastructure.adapter.output.persistence.
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
 public class BeanConfig {
 
@@ -37,6 +38,5 @@ public class BeanConfig {
     public BrandService brandService(final IBrandPersistencePort brandPersistencePort) {
         return new BrandService(new BrandUseCaseImpl(brandPersistencePort));
     }
-
 
 }
