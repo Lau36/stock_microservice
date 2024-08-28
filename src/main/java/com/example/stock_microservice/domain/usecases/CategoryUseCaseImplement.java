@@ -6,6 +6,9 @@ import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
 import com.example.stock_microservice.domain.execptions.AlreadyExistsException;
+import com.example.stock_microservice.domain.execptions.EmptyFieldException;
+import com.example.stock_microservice.domain.execptions.MaxLengthExceededException;
+import com.example.stock_microservice.utils.DomainConstants;
 
 
 import java.util.List;
@@ -21,6 +24,18 @@ public class CategoryUseCaseImplement implements ICategoryUseCases {
 
     @Override
     public Category createCategory(Category category) {
+        if(category.getCategoryName().trim().isEmpty()){
+            throw new EmptyFieldException( DomainConstants.Field.NAME.toString());
+        }
+        if(category.getCategoryDescription().trim().isEmpty()){
+            throw new EmptyFieldException(DomainConstants.Field.DESCRIPTION.toString() );
+        }
+        if(category.getCategoryName().length() > 50){
+            throw new MaxLengthExceededException(DomainConstants.Field.NAME.toString(), 50);
+        }
+        if(category.getCategoryDescription().length() > 90){
+            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPTION.toString(), 90);
+        }
 
         if(categoryPersistencePort.findByCategoryName(category.getCategoryName()).isPresent()){
             throw new AlreadyExistsException("The field '" + category.getCategoryName() + "' already exists");
