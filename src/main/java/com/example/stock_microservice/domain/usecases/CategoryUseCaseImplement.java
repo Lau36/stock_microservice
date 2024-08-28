@@ -1,7 +1,7 @@
 package com.example.stock_microservice.domain.usecases;
 
-import com.example.stock_microservice.domain.dto.PaginatedCategories;
-import com.example.stock_microservice.domain.dto.PaginationRequest;
+import com.example.stock_microservice.domain.utils.PaginatedCategories;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
@@ -21,6 +21,7 @@ public class CategoryUseCaseImplement implements ICategoryUseCases {
 
     @Override
     public Category createCategory(Category category) {
+
         if(categoryPersistencePort.findByCategoryName(category.getCategoryName()).isPresent()){
             throw new AlreadyExistsException("The field '" + category.getCategoryName() + "' already exists");
         }

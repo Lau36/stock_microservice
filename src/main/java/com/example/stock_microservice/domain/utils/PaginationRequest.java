@@ -1,4 +1,4 @@
-package com.example.stock_microservice.domain.dto;
+package com.example.stock_microservice.domain.utils;
 
 
 public class PaginationRequest {

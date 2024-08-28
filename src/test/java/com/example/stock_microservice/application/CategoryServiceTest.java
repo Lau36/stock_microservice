@@ -1,9 +1,9 @@
 package com.example.stock_microservice.application;
 
 import com.example.stock_microservice.application.services.CategoryService;
-import com.example.stock_microservice.domain.dto.PaginatedCategories;
-import com.example.stock_microservice.domain.dto.PaginationRequest;
-import com.example.stock_microservice.domain.dto.SortDirection;
+import com.example.stock_microservice.domain.utils.PaginatedCategories;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.SortDirection;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.ports.input.ICategoryUseCases;
 import org.junit.jupiter.api.BeforeEach;

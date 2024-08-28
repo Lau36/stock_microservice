@@ -1,4 +1,4 @@
-package com.example.stock_microservice.domain.dto;
+package com.example.stock_microservice.domain.utils;
 
 import com.example.stock_microservice.domain.models.Category;
 
