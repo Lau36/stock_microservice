@@ -6,6 +6,9 @@ import com.example.stock_microservice.domain.execptions.MaxLengthExceededExcepti
 import com.example.stock_microservice.domain.models.Brand;
 import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.usecases.BrandUseCaseImpl;
+import com.example.stock_microservice.domain.utils.PaginatedBrands;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.SortDirection;
 import com.example.stock_microservice.utils.DomainConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -122,6 +125,17 @@ class BrandUseCaseImplTest {
 
         assertEquals(brandTest, result);
         verify(brandPersistencePort, times(1)).save(brandTest);
+    }
+
+    @Test
+    void testListAllBrands(){
+        PaginationRequest paginationRequest = new PaginationRequest(0, 10, "name", SortDirection.ASC);
+        PaginatedBrands paginatedBrands = new PaginatedBrands(Arrays.asList(brand,brand),0,4,2);
+        when(brandPersistencePort.listAllBrands(paginationRequest)).thenReturn(paginatedBrands);
+
+        PaginatedBrands result = brandUseCase.listAllBrands(paginationRequest);
+        assertEquals(paginatedBrands, result);
+        verify(brandPersistencePort, times(1)).listAllBrands(paginationRequest);
     }
 
 

@@ -6,6 +6,8 @@ import com.example.stock_microservice.domain.ports.input.IBrandUseCase;
 import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.execptions.EmptyFieldException;
 import com.example.stock_microservice.domain.execptions.MaxLengthExceededException;
+import com.example.stock_microservice.domain.utils.PaginatedBrands;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
 import com.example.stock_microservice.utils.DomainConstants;
 
 
@@ -36,4 +38,10 @@ public class BrandUseCaseImpl implements IBrandUseCase {
         }
         return brandPersistencePort.save(brand);
     }
+
+    @Override
+    public PaginatedBrands listAllBrands(PaginationRequest paginationRequest) {
+        return brandPersistencePort.listAllBrands(paginationRequest);
+    }
+
 }
