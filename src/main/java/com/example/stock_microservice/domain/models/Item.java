@@ -3,23 +3,23 @@ package com.example.stock_microservice.domain.models;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class Article {
+public class Item {
     private final Long id;
     private final String name;
     private final String description;
     private final Integer amount;
     private final BigDecimal price;
-    private final List<Long> id_categories;
-    private final Long id_brand;
+    private final List<Long> idCategories;
+    private final Long idBrand;
 
-    public Article(Long id, String name, String description, Integer amount, BigDecimal price, List<Long> id_categories, Long id_brand) {
+    public Item(Long id, String name, String description, Integer amount, BigDecimal price, List<Long> idCategories, Long idBrand) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.amount = amount;
         this.price = price;
-        this.id_categories = id_categories;
-        this.id_brand = id_brand;
+        this.idCategories = idCategories;
+        this.idBrand = idBrand;
     }
 
     public Long getId() {
@@ -43,12 +43,12 @@ public class Article {
     }
 
 
-    public List<Long> getId_categories() {
-        return id_categories;
+    public List<Long> getIdCategories() {
+        return idCategories;
     }
 
-    public Long getId_brand() {
-        return id_brand;
+    public Long getIdBrand() {
+        return idBrand;
     }
 }
 

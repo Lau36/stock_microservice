@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name="item", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
-public class ArticleEntity {
+public class ItemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class ArticleEntity {
     @Column(name = "id_category")
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "Article_category",
+            name = "item_category",
             joinColumns = @JoinColumn(name = "id_article", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "id_category", referencedColumnName = "id")
     )

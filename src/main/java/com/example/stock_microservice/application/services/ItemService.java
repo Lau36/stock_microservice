@@ -1,17 +1,17 @@
 package com.example.stock_microservice.application.services;
 
-import com.example.stock_microservice.domain.models.Article;
-import com.example.stock_microservice.domain.ports.input.IArticleUseCase;
+import com.example.stock_microservice.domain.models.Item;
+import com.example.stock_microservice.domain.ports.input.IItemUseCase;
 
-public class ItemService implements IArticleUseCase {
-    private final IArticleUseCase articleUseCase;
+public class ItemService implements IItemUseCase {
+    private final IItemUseCase articleUseCase;
 
-    public ItemService(IArticleUseCase articleUseCase) {
+    public ItemService(IItemUseCase articleUseCase) {
         this.articleUseCase = articleUseCase;
     }
 
     @Override
-    public Article createArticle(Article article) {
-        return articleUseCase.createArticle(article);
+    public Item createItem(Item item) {
+        return articleUseCase.createItem(item);
     }
 }

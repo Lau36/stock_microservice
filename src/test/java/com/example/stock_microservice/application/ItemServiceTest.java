@@ -1,8 +1,8 @@
 package com.example.stock_microservice.application;
 
 import com.example.stock_microservice.application.services.ItemService;
-import com.example.stock_microservice.domain.models.Article;
-import com.example.stock_microservice.domain.ports.input.IArticleUseCase;
+import com.example.stock_microservice.domain.models.Item;
+import com.example.stock_microservice.domain.ports.input.IItemUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 class ItemServiceTest {
     @Mock
-    private IArticleUseCase articleUseCase;
+    private IItemUseCase articleUseCase;
 
     @InjectMocks
     private ItemService itemService;
@@ -33,9 +33,9 @@ class ItemServiceTest {
     @Test
     void testCreateArticle() {
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-        Article article = new Article(
+        Item item = new Item(
                 1L,
-                "Test Article",
+                "Test Item",
                 "This is a test description",
                 10,
                 new BigDecimal("19.99"),
@@ -43,12 +43,12 @@ class ItemServiceTest {
                 100L
         );
 
-        when(articleUseCase.createArticle(any(Article.class))).thenReturn(article);
+        when(articleUseCase.createItem(any(Item.class))).thenReturn(item);
 
-        Article createdArticle = itemService.createArticle(article);
+        Item createdItem = itemService.createItem(item);
 
-        verify(articleUseCase).createArticle(article);
+        verify(articleUseCase).createItem(item);
 
-        assertEquals(article, createdArticle);
+        assertEquals(item, createdItem);
     }
 }
