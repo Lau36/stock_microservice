@@ -22,18 +22,18 @@ public class BrandUseCaseImpl implements IBrandUseCase {
     @Override
     public Brand createBrand(Brand brand) {
         if(brand.getName().trim().isEmpty()){
-            throw new EmptyFieldException( DomainConstants.Field.NAME.toString());
+            throw new EmptyFieldException( DomainConstants.Field.NOMBRE.toString());
         }
         if(brand.getDescription().trim().isEmpty()){
-            throw new EmptyFieldException(DomainConstants.Field.DESCRIPTION.toString() );
+            throw new EmptyFieldException(DomainConstants.Field.DESCRIPCION.toString() );
         }
         if(brand.getName().length() > 50){
-            throw new MaxLengthExceededException(DomainConstants.Field.NAME.toString(), 50);
+            throw new MaxLengthExceededException(DomainConstants.Field.NOMBRE.toString(), 50);
         }
         if(brand.getDescription().length() > 120){
-            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPTION.toString(), 120);
+            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPCION.toString(), 120);
         }
-        if(brandPersistencePort.findByBrandName(brand.getName()).isPresent()){
+        if(brandPersistencePort.findByName(brand.getName()).isPresent()){
             throw new AlreadyExistsException("The field '" + brand.getName() + "' already exists");
         }
         return brandPersistencePort.save(brand);

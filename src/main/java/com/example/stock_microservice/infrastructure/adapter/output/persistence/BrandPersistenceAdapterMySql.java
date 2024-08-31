@@ -29,7 +29,13 @@ public class BrandPersistenceAdapterMySql implements IBrandPersistencePort {
     }
 
     @Override
-    public Optional<Brand> findByBrandName(String name) {
+    public Optional<Brand> findById(Long id) {
+        Optional<BrandEntity> brandEntity = brandRepository.findById(id);
+        return brandEntity.map(brandMapper::toBrand);
+    }
+
+    @Override
+    public Optional<Brand> findByName(String name) {
         Optional<BrandEntity> brandEntity = brandRepository.findByName(name);
         return brandEntity.map(brandMapper::toBrand);
     }

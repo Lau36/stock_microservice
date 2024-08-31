@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -43,6 +44,12 @@ public class CategoryPersistenceAdapterMySql implements ICategoryPersistencePort
         Page<CategoryEntity> categoryEntities = categoryRepository.findAll(pageable);
         List<Category> categories2 = categoryMapper.toCategoryList(categoryEntities.getContent());
         return new PaginatedCategories(categories2,categoryEntities.getNumber(),categoryEntities.getTotalPages(),categoryEntities.getTotalElements());
+    }
+
+    @Override
+    public List<Category> findAllById(List<Long> ids) {
+        List<CategoryEntity> categoryEntities = categoryRepository.findAllById(ids);
+        return categoryEntities.stream().map(categoryMapper::toCategory).collect(Collectors.toList());
     }
 
     @Override

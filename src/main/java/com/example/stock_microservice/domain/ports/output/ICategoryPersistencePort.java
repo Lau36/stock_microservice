@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICategoryPersistencePort {
-
     Category save(Category category);
     List<Category> getAll();
     Optional<Category> findByCategoryName(String categoryName);
     PaginatedCategories listCategories(PaginationRequest paginationRequest);
+    List<Category> findAllById(List<Long> ids);
 }

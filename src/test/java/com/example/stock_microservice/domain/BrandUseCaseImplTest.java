@@ -41,22 +41,22 @@ class BrandUseCaseImplTest {
 
     @Test
     void testCreateBrandSuccess() {
-        when(brandPersistencePort.findByBrandName(brand.getName())).thenReturn(Optional.empty());
+        when(brandPersistencePort.findByName(brand.getName())).thenReturn(Optional.empty());
         when(brandPersistencePort.save(brand)).thenReturn(brand);
 
         Brand createdBrand = brandUseCase.createBrand(brand);
 
         assertEquals(createdBrand, brand);
-        verify(brandPersistencePort, Mockito.times(1)).findByBrandName(brand.getName());
+        verify(brandPersistencePort, Mockito.times(1)).findByName(brand.getName());
         verify(brandPersistencePort, Mockito.times(1)).save(brand);
     }
 
     @Test
     void testCreateBrandAlreadyExists() {
-    when(brandPersistencePort.findByBrandName(brand.getName())).thenReturn(Optional.of(brand));
+    when(brandPersistencePort.findByName(brand.getName())).thenReturn(Optional.of(brand));
     assertThrows(AlreadyExistsException.class, () -> brandUseCase.createBrand(brand));
 
-    verify(brandPersistencePort, Mockito.times(1)).findByBrandName(brand.getName());
+    verify(brandPersistencePort, Mockito.times(1)).findByName(brand.getName());
     verify(brandPersistencePort, never()).save(brand);
     }
 
@@ -65,7 +65,7 @@ class BrandUseCaseImplTest {
         Brand brand1 = new Brand(1L,"", "Brand test1");
         assertThatThrownBy(() -> brandUseCase.createBrand(brand1))
                 .isInstanceOf(EmptyFieldException.class)
-                .hasMessageContaining(DomainConstants.Field.NAME.toString());
+                .hasMessageContaining(DomainConstants.Field.NOMBRE.toString());
 
         verify(brandPersistencePort, never()).save(any(Brand.class));
     }
@@ -74,7 +74,7 @@ class BrandUseCaseImplTest {
         Brand brand1 = new Brand(1L,"BrandTest1", "");
         assertThatThrownBy(() -> brandUseCase.createBrand(brand1))
                 .isInstanceOf(EmptyFieldException.class)
-                .hasMessageContaining(DomainConstants.Field.DESCRIPTION.toString());
+                .hasMessageContaining(DomainConstants.Field.DESCRIPCION.toString());
 
         verify(brandPersistencePort, never()).save(any(Brand.class));
     }
@@ -84,7 +84,7 @@ class BrandUseCaseImplTest {
         Brand brand1 = new Brand(1L,"A very long brandName A very long brandName A very long brandName", "Brand test1");
         assertThatThrownBy(() -> brandUseCase.createBrand(brand1))
                 .isInstanceOf(MaxLengthExceededException.class)
-                .hasMessageContaining(DomainConstants.Field.NAME.toString());
+                .hasMessageContaining(DomainConstants.Field.NOMBRE.toString());
 
         verify(brandPersistencePort, never()).save(brand1);
     }
@@ -94,7 +94,7 @@ class BrandUseCaseImplTest {
         Brand brand1 = new Brand(1L,"BrandName", "A very long brand description A very long brand description A very long brand description A very long brand description A very long brand description A very long brand description");
         assertThatThrownBy(() -> brandUseCase.createBrand(brand1))
                 .isInstanceOf(MaxLengthExceededException.class)
-                .hasMessageContaining(DomainConstants.Field.DESCRIPTION.toString());
+                .hasMessageContaining(DomainConstants.Field.DESCRIPCION.toString());
 
         verify(brandPersistencePort, never()).save(brand1);
     }
@@ -104,7 +104,7 @@ class BrandUseCaseImplTest {
         String maxLengthName = "B".repeat(50);
         Brand brandTest = new Brand(1L, maxLengthName, "Valid description");
 
-        when(brandPersistencePort.findByBrandName(maxLengthName)).thenReturn(Optional.empty());
+        when(brandPersistencePort.findByName(maxLengthName)).thenReturn(Optional.empty());
         when(brandPersistencePort.save(brandTest)).thenReturn(brandTest);
 
         Brand result = brandUseCase.createBrand(brandTest);
@@ -118,7 +118,7 @@ class BrandUseCaseImplTest {
         String maxLengthDescription = "B".repeat(90);
         Brand brandTest = new Brand(1L, "ValidName", maxLengthDescription);
 
-        when(brandPersistencePort.findByBrandName("ValidName")).thenReturn(Optional.empty());
+        when(brandPersistencePort.findByName("ValidName")).thenReturn(Optional.empty());
         when(brandPersistencePort.save(brandTest)).thenReturn(brandTest);
 
         Brand result = brandUseCase.createBrand(brandTest);

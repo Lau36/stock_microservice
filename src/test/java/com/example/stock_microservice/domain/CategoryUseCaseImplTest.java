@@ -68,7 +68,7 @@ import static org.mockito.Mockito.*;
          Category  category1 = new Category(  1L,"", "Category  test1");
          assertThatThrownBy(() -> categoryUseCaseImplement.createCategory(category1))
                  .isInstanceOf(EmptyFieldException.class)
-                 .hasMessageContaining(DomainConstants.Field.NAME.toString());
+                 .hasMessageContaining(DomainConstants.Field.NOMBRE.toString());
 
          verify(categoryPersistencePort, never()).save(any(Category.class));
      }
@@ -77,7 +77,7 @@ import static org.mockito.Mockito.*;
          Category  category1 = new Category(  1L,"CategoryTest1", "");
          assertThatThrownBy(() -> categoryUseCaseImplement.createCategory(category1))
                  .isInstanceOf(EmptyFieldException.class)
-                 .hasMessageContaining(DomainConstants.Field.DESCRIPTION.toString());
+                 .hasMessageContaining(DomainConstants.Field.DESCRIPCION.toString());
 
          verify(categoryPersistencePort, never()).save(any(Category.class));
      }
@@ -87,7 +87,7 @@ import static org.mockito.Mockito.*;
          Category  category1 = new Category(  1L,"A very long CategoryName A very long CategoryName A very long CategoryName", "Category  test1");
          assertThatThrownBy(() -> categoryUseCaseImplement.createCategory(category1))
                  .isInstanceOf(MaxLengthExceededException.class)
-                 .hasMessageContaining(DomainConstants.Field.NAME.toString());
+                 .hasMessageContaining(DomainConstants.Field.NOMBRE.toString());
 
          verify(categoryPersistencePort, never()).save(category1);
      }
@@ -125,7 +125,7 @@ import static org.mockito.Mockito.*;
          Category  category1 = new Category(  1L,"CategoryName", "A very long Category  description A very long Category  description A very long Category  description A very long Category  description A very long Category  description A very long Category  description");
          assertThatThrownBy(() -> categoryUseCaseImplement.createCategory(category1))
                  .isInstanceOf(MaxLengthExceededException.class)
-                 .hasMessageContaining(DomainConstants.Field.DESCRIPTION.toString());
+                 .hasMessageContaining(DomainConstants.Field.DESCRIPCION.toString());
 
          verify(categoryPersistencePort, never()).save(category1);
      }
