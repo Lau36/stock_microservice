@@ -8,7 +8,8 @@ import java.util.Optional;
 
 public interface IBrandPersistencePort {
     Brand save(Brand brand);
-    Optional<Brand> findByBrandName(String name);
+    Optional<Brand> findById(Long id);
+    Optional<Brand> findByName(String name);
     PaginatedBrands listAllBrands(PaginationRequest paginationRequest);
 
 }

@@ -25,16 +25,16 @@ public class CategoryUseCaseImplement implements ICategoryUseCases {
     @Override
     public Category createCategory(Category category) {
         if(category.getCategoryName().trim().isEmpty()){
-            throw new EmptyFieldException( DomainConstants.Field.NAME.toString());
+            throw new EmptyFieldException( DomainConstants.Field.NOMBRE.toString());
         }
         if(category.getCategoryDescription().trim().isEmpty()){
-            throw new EmptyFieldException(DomainConstants.Field.DESCRIPTION.toString() );
+            throw new EmptyFieldException(DomainConstants.Field.DESCRIPCION.toString() );
         }
         if(category.getCategoryName().length() > 50){
-            throw new MaxLengthExceededException(DomainConstants.Field.NAME.toString(), 50);
+            throw new MaxLengthExceededException(DomainConstants.Field.NOMBRE.toString(), 50);
         }
         if(category.getCategoryDescription().length() > 90){
-            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPTION.toString(), 90);
+            throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPCION.toString(), 90);
         }
 
         if(categoryPersistencePort.findByCategoryName(category.getCategoryName()).isPresent()){
