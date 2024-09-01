@@ -30,31 +30,32 @@ public class ItemUseCaseImpl implements IItemUseCase {
     @Override
     public Item createItem(Item item) {
 
-        if(item.getIdCategories() == null){
+        if(item.getCategories() == null){
             throw new NotNullException(DomainConstants.Field.CATEGORIAS.toString());
         }
-        if (item.getIdCategories().size() > 3){
+        if (item.getCategories().size() > 3){
             throw new ExceededMaximunCategories(DomainConstants.EXCEEDED_MAXIMUN_CATEGORIES_MESSAGE);
         }
-        if(item.getIdCategories().isEmpty()){
+        if(item.getCategories().isEmpty()){
             throw new EmptyFieldException(DomainConstants.Field.CATEGORIAS.toString());
         }
-        Set<Long> categoryIds = new HashSet<>(item.getIdCategories());
-        if(categoryIds.size() < item.getIdCategories().size()){
+        Set<Category> categorySet = new HashSet<>(item.getCategories());
+        if(categorySet.size() < item.getCategories().size()){
             throw new DuplicateCategoriesException(DomainConstants.DUPLICATE_CATEGORIES_EXCEPTION);
         }
-        if(item.getIdBrand() == null){
+        if(item.getBrand() == null){
             throw new NotNullException(DomainConstants.Field.ID_BRAND.toString());
         }
         if(itemPersistencePort.findByName(item.getName()).isPresent()){
             throw new AlreadyExistsException(item.getName());
         }
-        if(brandPersistencePort.findById(item.getIdBrand()).isEmpty()){
-            throw new NotFoundException("La marca'"+item.getIdBrand().toString()+ "'no existe en la base de datos");
+        if(brandPersistencePort.findById(item.getBrand().getId()).isEmpty()){
+            throw new NotFoundException("La marca'"+item.getBrand().toString()+ "'no existe en la base de datos");
         }
-        List<Category> categories = categoryPersistencePort.findAllById(item.getIdCategories());
-        if(categories.size() < item.getIdCategories().size()){
-            throw new NotFoundException("Alguna de estas categorias'"+ item.getIdCategories().toString()+"'no existen en la base de datos");
+        List<Long> categoryIds = item.getCategories().stream().map(Category::getId).toList();
+        List<Category> categories = categoryPersistencePort.findAllById(categoryIds);
+        if(categories.size() < item.getCategories().size()){
+            throw new NotFoundException("Alguna de estas categorias'"+ item.getCategories().toString()+"'no existen en la base de datos");
         }
         return itemPersistencePort.saveArticle(item);
     }
@@ -63,4 +64,5 @@ public class ItemUseCaseImpl implements IItemUseCase {
     public Paginated<Item> getItems(PaginationRequest paginationRequest) {
         return itemPersistencePort.listAllItemsPaginated(paginationRequest);
     }
+
 }

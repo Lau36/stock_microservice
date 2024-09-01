@@ -5,7 +5,7 @@ import com.example.stock_microservice.application.services.ItemService;
 import com.example.stock_microservice.domain.models.Item;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddItemRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.AddItemResponse;
-import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemRequestMapper;
+import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemResponseMapper;
 import com.example.stock_microservice.utils.DomainConstants;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-    private final ItemRequestMapper itemRequestMapper;
+    private final AddItemMapper addItemMapper;
     private final ItemResponseMapper itemResponseMapper;
 
     @PostMapping
     public ResponseEntity<AddItemResponse> createItem(@RequestBody AddItemRequest addItemRequest) {
-        Item createdItem = itemService.createItem(itemRequestMapper.toArticle(addItemRequest));
+        Item createdItem = itemService.createItem(addItemMapper.toItem(addItemRequest));
         AddItemResponse response = itemResponseMapper.toAddItemResponse(DomainConstants.SUCCESSFUL_CREATED_ITEM_MESSAGE,createdItem);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

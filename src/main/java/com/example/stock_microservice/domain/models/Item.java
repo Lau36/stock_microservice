@@ -9,17 +9,17 @@ public class Item {
     private final String description;
     private final Integer amount;
     private final BigDecimal price;
-    private final List<Long> idCategories;
-    private final Long idBrand;
+    private final List<Category> categories;
+    private final Brand brand;
 
-    public Item(Long id, String name, String description, Integer amount, BigDecimal price, List<Long> idCategories, Long idBrand) {
+    public Item(Long id, String name, String description, Integer amount, BigDecimal price, List<Category> categories, Brand brand) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.amount = amount;
         this.price = price;
-        this.idCategories = idCategories;
-        this.idBrand = idBrand;
+        this.categories = categories;
+        this.brand = brand;
     }
 
     public Long getId() {
@@ -43,12 +43,12 @@ public class Item {
     }
 
 
-    public List<Long> getIdCategories() {
-        return idCategories;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public Long getIdBrand() {
-        return idBrand;
+    public Brand getBrand() {
+        return brand;
     }
 }
 

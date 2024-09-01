@@ -9,12 +9,13 @@ import com.example.stock_microservice.domain.usecases.ItemUseCaseImpl;
 import com.example.stock_microservice.domain.usecases.BrandUseCaseImpl;
 import com.example.stock_microservice.domain.usecases.CategoryUseCaseImplement;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
+import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.ItemPersistenceAdapterMySql;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.BrandPersistenceAdapterMySql;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.CategoryPersistenceAdapterMySql;
-import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.ItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.BrandMapper;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.CategoryMapper;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.ItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.ItemRepository;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.BrandRepository;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.CategoryRepository;
@@ -46,8 +47,8 @@ public class BeanConfig {
     }
 
     @Bean
-    public IItemPersistencePort articlePersistencePort(final ItemRepository itemRepository, final ItemMapper itemMapper) {
-        return new ItemPersistenceAdapterMySql(itemRepository, itemMapper);
+    public IItemPersistencePort articlePersistencePort(final ItemRepository itemRepository, final ItemMapper itemMapper, final CategoryRepository categoryRepository, final BrandRepository brandRepository) {
+        return new ItemPersistenceAdapterMySql(itemRepository, categoryRepository, brandRepository, itemMapper);
     }
 
     @Bean
@@ -56,8 +57,8 @@ public class BeanConfig {
     }
 
     @Bean
-    public ItemMapper articleMapper(final CategoryRepository categoryRepository, final BrandRepository brandRepository) {
-        return new ItemMapper(categoryRepository, brandRepository);
+    public AddItemMapper addItemMapper(final ICategoryPersistencePort categoryPersistencePort, final IBrandPersistencePort brandPersistencePort) {
+        return new AddItemMapper(categoryPersistencePort, brandPersistencePort);
     }
 
 }

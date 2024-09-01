@@ -1,43 +1,54 @@
 package com.example.stock_microservice.infrastructure.adapter.output.persistence;
 
-import com.example.stock_microservice.domain.models.Category;
+import com.example.stock_microservice.domain.execptions.NotFoundException;
 import com.example.stock_microservice.domain.models.Item;
 import com.example.stock_microservice.domain.ports.output.IItemPersistencePort;
 import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
-import com.example.stock_microservice.infrastructure.adapter.output.persistence.dto.BranNameId;
-import com.example.stock_microservice.infrastructure.adapter.output.persistence.dto.CategoryNameId;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.BrandEntity;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.CategoryEntity;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.ItemEntity;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.mapper.ItemMapper;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.BrandRepository;
+import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.CategoryRepository;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.ItemRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 
 public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
 
     private final ItemRepository itemRepository;
+    private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
     private final ItemMapper itemMapper;
 
     @Override
     public Item saveArticle(Item item) {
-        ItemEntity itemEntity = itemMapper.toArticleEntity(item);
+
+        List<CategoryEntity> managedCategories = item.getCategories().stream()
+                .map(category -> categoryRepository.findById(category.getId())
+                        .orElseThrow(() -> new NotFoundException("Category not found: " + category.getId())))
+                .toList();
+
+        BrandEntity managedBrand = brandRepository.findById(item.getBrand().getId())
+                .orElseThrow(() -> new NotFoundException("Brand not found: " + item.getBrand().getId()));
+
+        ItemEntity itemEntity = itemMapper.toItemEntity(item);
+        itemEntity.setCategories(managedCategories);
+        itemEntity.setBrand(managedBrand);
+
         ItemEntity savedItemEntity = itemRepository.save(itemEntity);
-        return itemMapper.toArticle(savedItemEntity);
+        return itemMapper.toItem(savedItemEntity);
     }
 
     @Override
     public Optional<Item> findByName(String articleName) {
         Optional<ItemEntity> articleEntity = itemRepository.findByName(articleName);
-        return articleEntity.map(itemMapper::toArticle);
+        return articleEntity.map(itemMapper::toItem);
     }
 
     @Override
@@ -63,4 +74,5 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
 //        }).toList();
         return null;
     }
+
 }
