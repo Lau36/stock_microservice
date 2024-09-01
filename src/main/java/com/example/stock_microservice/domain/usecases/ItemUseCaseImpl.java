@@ -7,6 +7,8 @@ import com.example.stock_microservice.domain.ports.input.IItemUseCase;
 import com.example.stock_microservice.domain.ports.output.IItemPersistencePort;
 import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
+import com.example.stock_microservice.domain.utils.Paginated;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
 import com.example.stock_microservice.utils.DomainConstants;
 
 import java.util.HashSet;
@@ -15,12 +17,12 @@ import java.util.Set;
 
 public class ItemUseCaseImpl implements IItemUseCase {
 
-    private final IItemPersistencePort articlePersistencePort;
+    private final IItemPersistencePort itemPersistencePort;
     private final IBrandPersistencePort brandPersistencePort;
     private final ICategoryPersistencePort categoryPersistencePort;
 
     public ItemUseCaseImpl(IItemPersistencePort articlePersistencePort, IBrandPersistencePort brandPersistencePort, ICategoryPersistencePort categoryPersistencePort) {
-        this.articlePersistencePort = articlePersistencePort;
+        this.itemPersistencePort = articlePersistencePort;
         this.brandPersistencePort = brandPersistencePort;
         this.categoryPersistencePort = categoryPersistencePort;
     }
@@ -44,7 +46,7 @@ public class ItemUseCaseImpl implements IItemUseCase {
         if(item.getIdBrand() == null){
             throw new NotNullException(DomainConstants.Field.ID_BRAND.toString());
         }
-        if(articlePersistencePort.findByName(item.getName()).isPresent()){
+        if(itemPersistencePort.findByName(item.getName()).isPresent()){
             throw new AlreadyExistsException(item.getName());
         }
         if(brandPersistencePort.findById(item.getIdBrand()).isEmpty()){
@@ -54,6 +56,11 @@ public class ItemUseCaseImpl implements IItemUseCase {
         if(categories.size() < item.getIdCategories().size()){
             throw new NotFoundException("Alguna de estas categorias'"+ item.getIdCategories().toString()+"'no existen en la base de datos");
         }
-        return articlePersistencePort.saveArticle(item);
+        return itemPersistencePort.saveArticle(item);
+    }
+
+    @Override
+    public Paginated<Item> getItems(PaginationRequest paginationRequest) {
+        return itemPersistencePort.listAllItemsPaginated(paginationRequest);
     }
 }

@@ -41,4 +41,8 @@ public class ItemMapper {
                 itemEntity.getBrand().getId()
         );
     }
+
+//    public List<Item> toItemList(List<ItemEntity> itemsEntity) {
+//        return new
+//    }
 }
