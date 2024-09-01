@@ -8,6 +8,9 @@ import com.example.stock_microservice.domain.ports.output.IItemPersistencePort;
 import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
 import com.example.stock_microservice.domain.usecases.ItemUseCaseImpl;
+import com.example.stock_microservice.domain.utils.Paginated;
+import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.SortDirection;
 import com.example.stock_microservice.utils.DomainConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +30,7 @@ import static org.mockito.Mockito.*;
 
  class ItemUseCaseImplTest {
      @Mock
-     private IItemPersistencePort articlePersistencePort;
+     private IItemPersistencePort itemPersistencePort;
 
      @Mock
      private IBrandPersistencePort brandPersistencePort;
@@ -44,6 +47,9 @@ import static org.mockito.Mockito.*;
      private Category category4;
      List<Category> categories;
      private Brand brand;
+     private PaginationRequest paginationRequest;
+     private Paginated<Item> paginatedItems;
+
 
      @BeforeEach
      void setUp() {
@@ -54,6 +60,13 @@ import static org.mockito.Mockito.*;
          category4 = new Category(4L, "nombreTest4", "DescripcionTest2");
          brand = new Brand(1L, "nombreTest1", "DescripcionTest1");
          categories = Arrays.asList(category1,category2);
+         // Create a sample pagination request
+         paginationRequest = new PaginationRequest(0, 10, "name", SortDirection.ASC);
+
+         // Create a sample paginated response
+         Item item1 = new Item(1L, "Item1", "Description1", 10, BigDecimal.valueOf(19.99), List.of(), null);
+         Item item2 = new Item(2L, "Item2", "Description2", 20, BigDecimal.valueOf(29.99), List.of(), null);
+         paginatedItems = new Paginated<>(List.of(item1, item2), 0, 1, 2);
      }
 
      @Test
@@ -71,10 +84,10 @@ import static org.mockito.Mockito.*;
                  brand
          );
 
-         when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.empty());
+         when(itemPersistencePort.findByName(anyString())).thenReturn(Optional.empty());
          when(brandPersistencePort.findById(anyLong())).thenReturn(Optional.of(mock(Brand.class)));
          when(categoryPersistencePort.findAllById(categoryIds)).thenReturn(List.of(new Category(1L, "Category 1", "Description test"), new Category(2L, "Category 2", "Description test")));
-         when(articlePersistencePort.saveArticle(item)).thenReturn(item);
+         when(itemPersistencePort.saveArticle(item)).thenReturn(item);
 
 
          Item createdItem = itemUseCase.createItem(item);
@@ -82,7 +95,7 @@ import static org.mockito.Mockito.*;
 
          assertNotNull(createdItem);
          assertEquals("New Item", createdItem.getName());
-         verify(articlePersistencePort).saveArticle(item);
+         verify(itemPersistencePort).saveArticle(item);
      }
 
      @Test
@@ -138,7 +151,7 @@ import static org.mockito.Mockito.*;
      void testCreateItem_ThrowsAlreadyExistsException() {
          Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
 
-         when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.of(item));
+         when(itemPersistencePort.findByName(anyString())).thenReturn(Optional.of(item));
 
          AlreadyExistsException thrown = assertThrows(AlreadyExistsException.class, () -> itemUseCase.createItem(item));
          assertEquals("Item", thrown.getMessage());
@@ -148,7 +161,7 @@ import static org.mockito.Mockito.*;
      void testCreateItem_ThrowsNotFoundExceptionForBrand() {
          Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
 
-         when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.empty());
+         when(itemPersistencePort.findByName(anyString())).thenReturn(Optional.empty());
          when(brandPersistencePort.findById(anyLong())).thenReturn(Optional.empty());
 
          NotFoundException thrown = assertThrows(NotFoundException.class, () -> itemUseCase.createItem(item));
@@ -160,12 +173,22 @@ import static org.mockito.Mockito.*;
          List<Long> categoryIds = Arrays.asList(1L, 2L);
          Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
 
-         when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.empty());
+         when(itemPersistencePort.findByName(anyString())).thenReturn(Optional.empty());
          when(brandPersistencePort.findById(anyLong())).thenReturn(Optional.of(mock(Brand.class)));
          when(categoryPersistencePort.findAllById(categoryIds)).thenReturn(List.of(new Category(1L, "Category 1", "Description test")));
 
          NotFoundException thrown = assertThrows(NotFoundException.class, () -> itemUseCase.createItem(item));
          assertEquals("Alguna de las categorias ingresadas no existe en la base de datos", thrown.getMessage());
+     }
+
+     @Test
+     void testGetItems() {
+         when(itemPersistencePort.listAllItemsPaginated(paginationRequest)).thenReturn(paginatedItems);
+
+         Paginated<Item> result = itemUseCase.getItems(paginationRequest);
+
+         verify(itemPersistencePort, times(1)).listAllItemsPaginated(paginationRequest);
+         assertEquals(paginatedItems, result);
      }
 
 
