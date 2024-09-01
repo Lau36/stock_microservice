@@ -10,6 +10,7 @@ import com.example.stock_microservice.domain.usecases.BrandUseCaseImpl;
 import com.example.stock_microservice.domain.usecases.CategoryUseCaseImplement;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
+import com.example.stock_microservice.infrastructure.adapter.input.mapper.PaginatedItemResponseMapper;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.ItemPersistenceAdapterMySql;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.BrandPersistenceAdapterMySql;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.CategoryPersistenceAdapterMySql;
@@ -59,6 +60,11 @@ public class BeanConfig {
     @Bean
     public AddItemMapper addItemMapper(final ICategoryPersistencePort categoryPersistencePort, final IBrandPersistencePort brandPersistencePort) {
         return new AddItemMapper(categoryPersistencePort, brandPersistencePort);
+    }
+
+    @Bean
+    public PaginatedItemResponseMapper paginatedItemResponseMapper(){
+        return new PaginatedItemResponseMapper();
     }
 
 }

@@ -13,6 +13,10 @@ import com.example.stock_microservice.infrastructure.adapter.output.persistence.
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.CategoryRepository;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.ItemRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,26 +57,21 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
 
     @Override
     public Paginated<Item> listAllItemsPaginated(PaginationRequest paginationRequest) {
-//        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
-//        Pageable pageable = PageRequest.of(paginationRequest.getPage(),paginationRequest.getSize(), sort);
-//        Page<ItemEntity> itemEntities = itemRepository.findAll(pageable);
-//        List<Item> items = itemEntities.stream().map(itemEntity -> {
-//            List<CategoryNameId> categories = itemEntity.getCategories().stream().map(categoryEntity ->
-//                new CategoryNameId(categoryEntity.getId(),categoryEntity.getCategoryName())).toList();
-//
-//            BranNameId brand = new BranNameId(itemEntity.getBrand().getId(),itemEntity.getBrand().getName());
-//
-//            return new Item(
-//                    itemEntity.getId(),
-//                    itemEntity.getName(),
-//                    itemEntity.getDescription(),
-//                    itemEntity.getAmount(),
-//                    itemEntity.getPrice(),
-//
-//            )
-//
-//        }).toList();
-        return null;
+        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+        if (paginationRequest.getSort().equalsIgnoreCase("brandName")) {
+            sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), "brand.name");
+        }
+        if(paginationRequest.getSort().equalsIgnoreCase("categoryName")){
+            sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), "categories.categoryName");
+        }
+        if(paginationRequest.getSort().equalsIgnoreCase("itemName")){
+            sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), "name");
+
+        }
+        Pageable pageable = PageRequest.of(paginationRequest.getPage(),paginationRequest.getSize(), sort);
+        Page<ItemEntity> itemEntities = itemRepository.findAll(pageable);
+        List<Item> itemsList = itemEntities.stream().map(itemMapper::toItem).toList();
+        return new Paginated<>(itemsList,itemEntities.getNumber(),itemEntities.getTotalPages(),itemEntities.getTotalElements());
     }
 
 }
