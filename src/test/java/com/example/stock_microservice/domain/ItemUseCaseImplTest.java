@@ -36,25 +36,39 @@ import static org.mockito.Mockito.*;
      private ICategoryPersistencePort categoryPersistencePort;
 
      @InjectMocks
-     private ItemUseCaseImpl articleUseCase;
+     private ItemUseCaseImpl itemUseCase;
+     
+     private Category category1;
+     private Category category2;
+     private Category category3;
+     private Category category4;
+     List<Category> categories;
+     private Brand brand;
 
      @BeforeEach
      void setUp() {
          MockitoAnnotations.openMocks(this);
+         category1 = new Category(1L, "nombreTest1", "DescripcionTest1");
+         category2 = new Category(2L, "nombreTest2", "DescripcionTest2");
+         category3 = new Category(3L, "nombreTest3", "DescripcionTest2");
+         category4 = new Category(4L, "nombreTest4", "DescripcionTest2");
+         brand = new Brand(1L, "nombreTest1", "DescripcionTest1");
+         categories = Arrays.asList(category1,category2);
      }
 
      @Test
-     void testCreateArticle_Success() {
+     void testCreateItem_Success() {
 
          List<Long> categoryIds = Arrays.asList(1L, 2L);
+
          Item item = new Item(
                  null,
                  "New Item",
                  "Description of the new item",
                  10,
                  new BigDecimal("29.99"),
-                 categoryIds,
-                 100L
+                 categories,
+                 brand
          );
 
          when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.empty());
@@ -63,7 +77,7 @@ import static org.mockito.Mockito.*;
          when(articlePersistencePort.saveArticle(item)).thenReturn(item);
 
 
-         Item createdItem = articleUseCase.createItem(item);
+         Item createdItem = itemUseCase.createItem(item);
 
 
          assertNotNull(createdItem);
@@ -72,83 +86,88 @@ import static org.mockito.Mockito.*;
      }
 
      @Test
-     void testCreateArticle_ThrowsNotNullExceptionForCategories() {
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), null, 100L);
-
-         NotNullException thrown = assertThrows(NotNullException.class, () -> articleUseCase.createItem(item));
+     void testCreateItem_ThrowsNotNullExceptionForCategories() {
+         Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), null, brand);
+         NotNullException thrown = assertThrows(NotNullException.class, () -> itemUseCase.createItem(item));
          assertEquals("CATEGORIAS", thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsExceededMaximunCategories() {
-         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L, 4L);
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 100L);
+     void testCreateItem_ThrowsExceededMaximunCategories() {
+         List<Category> moreThan3Categories = Arrays.asList(category1,category2,category3,category4);
+         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), moreThan3Categories, brand);
 
-         ExceededMaximunCategories thrown = assertThrows(ExceededMaximunCategories.class, () -> articleUseCase.createItem(item));
+         ExceededMaximunCategories thrown = assertThrows(ExceededMaximunCategories.class, () -> itemUseCase.createItem(item));
          assertEquals(DomainConstants.EXCEEDED_MAXIMUN_CATEGORIES_MESSAGE, thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsEmptyFieldExceptionForCategories() {
-         List<Long> categoryIds = List.of();
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 100L);
-
-         EmptyFieldException thrown = assertThrows(EmptyFieldException.class, () -> articleUseCase.createItem(item));
+     void testCreateItem_ThrowsEmptyFieldExceptionForCategories() {
+         List<Category> categoriesNull = List.of();
+         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoriesNull, brand);
+         EmptyFieldException thrown = assertThrows(EmptyFieldException.class, () -> itemUseCase.createItem(item));
          assertEquals("CATEGORIAS", thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsDuplicateCategoriesException() {
-         List<Long> categoryIds = Arrays.asList(1L, 1L);
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 100L);
+     void testCreateItem_ThrowsDuplicateCategoriesException() {
+         Category category = new Category(1L, "nombreTest1", "DescripcionTest1");
+         Item item = new Item(
+                 null,
+                 "Test Item",
+                 "Test Description",
+                 10,
+                 new BigDecimal("9.99"),
+                 List.of(category, category),
+                 brand
+         );
 
-         DuplicateCategoriesException thrown = assertThrows(DuplicateCategoriesException.class, () -> articleUseCase.createItem(item));
+         DuplicateCategoriesException thrown = assertThrows(DuplicateCategoriesException.class, () -> itemUseCase.createItem(item));
          assertEquals(DomainConstants.DUPLICATE_CATEGORIES_EXCEPTION, thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsNotNullExceptionForBrand() {
-         List<Long> categoryIds = Arrays.asList(1L, 2L);
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, null);
+     void testCreateItem_ThrowsNotNullExceptionForBrand() {
+         Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, null);
 
-         NotNullException thrown = assertThrows(NotNullException.class, () -> articleUseCase.createItem(item));
-         assertEquals("ID_BRAND", thrown.getMessage());
+         NotNullException thrown = assertThrows(NotNullException.class, () -> itemUseCase.createItem(item));
+         assertEquals("BRAND", thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsAlreadyExistsException() {
-         List<Long> categoryIds = Arrays.asList(1L, 2L);
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 100L);
+     void testCreateItem_ThrowsAlreadyExistsException() {
+         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
 
          when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.of(item));
 
-         AlreadyExistsException thrown = assertThrows(AlreadyExistsException.class, () -> articleUseCase.createItem(item));
+         AlreadyExistsException thrown = assertThrows(AlreadyExistsException.class, () -> itemUseCase.createItem(item));
          assertEquals("Item", thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsNotFoundExceptionForBrand() {
-         List<Long> categoryIds = Arrays.asList(1L, 2L);
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 100L);
+     void testCreateItem_ThrowsNotFoundExceptionForBrand() {
+         Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
 
          when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.empty());
          when(brandPersistencePort.findById(anyLong())).thenReturn(Optional.empty());
 
-         NotFoundException thrown = assertThrows(NotFoundException.class, () -> articleUseCase.createItem(item));
-         assertEquals("La marca'100'no existe en la base de datos", thrown.getMessage());
+         NotFoundException thrown = assertThrows(NotFoundException.class, () -> itemUseCase.createItem(item));
+         assertEquals("La marca ingresada no existe en la base de datos", thrown.getMessage());
      }
 
      @Test
-     void testCreateArticle_ThrowsNotFoundExceptionForCategories() {
+     void testCreateItem_ThrowsNotFoundExceptionForCategories() {
          List<Long> categoryIds = Arrays.asList(1L, 2L);
-         Item item = new Item(null, "Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 100L);
+         Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
 
          when(articlePersistencePort.findByName(anyString())).thenReturn(Optional.empty());
          when(brandPersistencePort.findById(anyLong())).thenReturn(Optional.of(mock(Brand.class)));
          when(categoryPersistencePort.findAllById(categoryIds)).thenReturn(List.of(new Category(1L, "Category 1", "Description test")));
 
-         NotFoundException thrown = assertThrows(NotFoundException.class, () -> articleUseCase.createItem(item));
-         assertEquals("Alguna de estas categorias'"+ item.getIdCategories()+"'no existen en la base de datos", thrown.getMessage());
+         NotFoundException thrown = assertThrows(NotFoundException.class, () -> itemUseCase.createItem(item));
+         assertEquals("Alguna de las categorias ingresadas no existe en la base de datos", thrown.getMessage());
      }
+
+
 
  }

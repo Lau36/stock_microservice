@@ -57,6 +57,7 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
 
     @Override
     public Paginated<Item> listAllItemsPaginated(PaginationRequest paginationRequest) {
+
         Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
         if (paginationRequest.getSort().equalsIgnoreCase("brandName")) {
             sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), "brand.name");

@@ -17,13 +17,13 @@ public class AddItemMapper {
     private final IBrandPersistencePort brandPersistencePort;
 
     public Item toItem(AddItemRequest addItemRequest) {
-        // Obtener las categorías por sus IDs
-        List<Category> categories = categoryPersistencePort.findAllById(addItemRequest.getIdCategories());
 
-        // Obtener la marca por su ID
-        Brand brand = brandPersistencePort.findById(addItemRequest.getIdBrand()).orElseThrow(() -> new NotFoundException("La marca con ID '" + addItemRequest.getIdBrand() + "' no existe en la base de datos"));
+        List<Category> categories = addItemRequest.getIdCategories().stream()
+                .map(id -> new Category(id, "name", "description"))
+                .toList();
 
-        // Mapear y devolver el objeto Item
+        Brand brand = new Brand(addItemRequest.getIdBrand(), "name", "description");
+
         return new Item(
                 null,
                 addItemRequest.getName(),

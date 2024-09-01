@@ -1,9 +1,9 @@
 package com.example.stock_microservice.infrastructure.configuration.exceptionhandler;
 
 import com.example.stock_microservice.domain.execptions.*;
-import com.example.stock_microservice.infrastructure.adapter.input.exceptions.EmptyFieldException;
 import com.example.stock_microservice.infrastructure.adapter.input.exceptions.MaxLengthExceededException;
 import com.example.stock_microservice.infrastructure.configuration.Constants;
+import com.example.stock_microservice.domain.execptions.EmptyFieldException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

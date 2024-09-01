@@ -1,10 +1,12 @@
 package com.example.stock_microservice.infrastructure.adapter.input.controller;
 
 import com.example.stock_microservice.application.services.ItemService;
+import com.example.stock_microservice.domain.models.Brand;
+import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.models.Item;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddItemRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.AddItemResponse;
-import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemRequestMapper;
+import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemResponseMapper;
 import com.example.stock_microservice.utils.DomainConstants;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +29,7 @@ class ItemControllerTest {
     ItemService itemService;
 
     @Mock
-    ItemRequestMapper itemRequestMapper;
+    AddItemMapper addItemMapper;
 
     @Mock
     ItemResponseMapper itemResponseMapper;
@@ -42,16 +44,21 @@ class ItemControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        List<Long> categoryIds = Arrays.asList(1L, 2L);
-        addItemRequest = new AddItemRequest("Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 2L);
-        item = new Item(1L,"Item", "Description", 10, new BigDecimal("19.99"), categoryIds, 1L);
+
+        Category category1 = new Category(1L, "nombreTest1", "DescripcionTest1");
+        Category category2 = new Category(2L, "nombreTest2", "DescripcionTest2");
+        Brand brand = new Brand(1L, "nombreTest1", "DescripcionTest1");
+        List<Category> categories = Arrays.asList(category1,category2);
+        List<Long> categoriesIds = Arrays.asList(category1.getId(), category2.getId());
+        addItemRequest = new AddItemRequest("Item", "Description", 10, new BigDecimal("19.99"), categoriesIds, brand.getId());
+        item = new Item(1L,"Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
         addItemResponse = new AddItemResponse(DomainConstants.SUCCESSFUL_CREATED_ITEM_MESSAGE,"Item", "Description");
 
     }
 
     @Test
     void testCreateItem() {
-        when(itemRequestMapper.toArticle(addItemRequest)).thenReturn(item);
+        when(addItemMapper.toItem(addItemRequest)).thenReturn(item);
         when(itemService.createItem(item)).thenReturn(item);
         when(itemResponseMapper.toAddItemResponse(DomainConstants.SUCCESSFUL_CREATED_ITEM_MESSAGE,item)).thenReturn(addItemResponse);
 
@@ -60,7 +67,7 @@ class ItemControllerTest {
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(addItemResponse, responseEntity.getBody());
 
-        verify(itemRequestMapper, times(1)).toArticle(addItemRequest);
+        verify(addItemMapper, times(1)).toItem(addItemRequest);
         verify(itemService, times(1)).createItem(item);
         verify(itemResponseMapper, times(1)).toAddItemResponse(DomainConstants.SUCCESSFUL_CREATED_ITEM_MESSAGE,item);
     }
