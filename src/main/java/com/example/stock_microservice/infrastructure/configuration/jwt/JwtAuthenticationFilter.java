@@ -38,8 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .parseClaimsJws(token)
                     .getBody();
             String userName = claims.getSubject();
-            String roleClaim = claims.get("role", String.class);
-            String role = roleClaim.replace("[", "").replace("]", "");
+            String role = claims.get("role", String.class);
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
 
             UserDetails userDetails = new org.springframework.security.core.userdetails.User(
