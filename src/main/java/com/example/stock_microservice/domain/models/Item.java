@@ -42,7 +42,6 @@ public class Item {
         return amount;
     }
 
-
     public List<Category> getCategories() {
         return categories;
     }
