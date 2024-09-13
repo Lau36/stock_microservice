@@ -21,4 +21,9 @@ public class ItemService implements IItemUseCase {
     public Paginated<Item> getItems(PaginationRequest paginationRequest) {
         return itemUseCase.getItems(paginationRequest);
     }
+
+    @Override
+    public Item addStock(Long id, Integer quantity) {
+        return itemUseCase.addStock(id, quantity);
+    }
 }

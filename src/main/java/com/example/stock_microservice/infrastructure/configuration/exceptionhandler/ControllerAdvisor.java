@@ -4,6 +4,7 @@ import com.example.stock_microservice.domain.execptions.*;
 import com.example.stock_microservice.infrastructure.adapter.input.exceptions.MaxLengthExceededException;
 import com.example.stock_microservice.infrastructure.configuration.Constants;
 import com.example.stock_microservice.domain.execptions.EmptyFieldException;
+import com.example.stock_microservice.utils.DomainConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +70,14 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(new ExceptionResponse(
                 String.format(Constants.NOT_FOUND_EXCEPTION_MESSAGE, e.getMessage()),
                 HttpStatus.NOT_FOUND.toString(),
+                LocalDateTime.now()
+        ));
+    }
+    @ExceptionHandler(NotNegativeException.class)
+    public ResponseEntity<ExceptionResponse> handleNotNegativeException(NotNegativeException e){
+        return ResponseEntity.badRequest().body(new ExceptionResponse(
+                String.format(DomainConstants.QUANTITY_NOT_NEGATIVE),
+                HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now()
         ));
     }

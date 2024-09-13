@@ -70,4 +70,15 @@ public class ItemUseCaseImpl implements IItemUseCase {
         return itemPersistencePort.listAllItemsPaginated(paginationRequest);
     }
 
+    @Override
+    public Item addStock(Long id, Integer quantity) {
+        if(quantity == null || id == null){
+            throw new NotNullException(DomainConstants.FIELD_NOT_NULL);
+        }
+        if(quantity < 0){
+            throw new NotNegativeException(DomainConstants.QUANTITY_NOT_NEGATIVE);
+        }
+        return itemPersistencePort.addStock(id, quantity);
+    }
+
 }

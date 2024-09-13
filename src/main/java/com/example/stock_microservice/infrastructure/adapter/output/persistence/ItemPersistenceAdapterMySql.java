@@ -75,4 +75,12 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
         return new Paginated<>(itemsList,itemEntities.getNumber(),itemEntities.getTotalPages(),itemEntities.getTotalElements());
     }
 
+    @Override
+    public Item addStock(Long id, Integer quantity) {
+        ItemEntity item = itemRepository.findById(id).orElseThrow();
+        item.setAmount(item.getAmount() + quantity);
+        ItemEntity newItem = itemRepository.save(item);
+        return itemMapper.toItem(newItem);
+    }
+
 }

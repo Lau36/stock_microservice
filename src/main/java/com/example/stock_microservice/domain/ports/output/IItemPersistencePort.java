@@ -9,4 +9,5 @@ public interface IItemPersistencePort {
     Item saveArticle(Item item);
     Optional<Item> findByName(String articleName);
     Paginated<Item> listAllItemsPaginated(PaginationRequest paginationRequest);
+    Item addStock(Long id, Integer quantity);
 }
