@@ -21,4 +21,5 @@ public class DomainConstants {
     public static final String CATEGORIES_NOT_FOUND = "Alguna de las categorias ingresadas no existe en la base de datos";
     public static final String FIELD_NOT_NULL = "El campo no puede ser nulo";
     public static final String QUANTITY_NOT_NEGATIVE ="El valor no puede ser negativo";
+    public static final String ITEM_NOT_FOUND = "El item no fue encontrado";
 }

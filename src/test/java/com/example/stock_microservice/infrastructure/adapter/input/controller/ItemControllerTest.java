@@ -8,7 +8,9 @@ import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
 import com.example.stock_microservice.domain.utils.SortDirection;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddItemRequest;
+import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddStockRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.AddItemResponse;
+import com.example.stock_microservice.infrastructure.adapter.input.dto.response.AddStockResponse;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.PaginatedItemResponse;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemResponseMapper;
@@ -21,7 +23,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -29,6 +34,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ItemControllerTest {
     @Mock
@@ -46,6 +55,8 @@ class ItemControllerTest {
     @InjectMocks
     ItemController itemController;
 
+    private MockMvc mockMvc;
+
     private AddItemRequest addItemRequest;
     private Item item;
     private AddItemResponse addItemResponse;
@@ -53,6 +64,7 @@ class ItemControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
 
         Category category1 = new Category(1L, "nombreTest1", "DescripcionTest1");
         Category category2 = new Category(2L, "nombreTest2", "DescripcionTest2");
@@ -107,4 +119,21 @@ class ItemControllerTest {
         assertEquals(paginationRequest.getSort(), capturedPaginationRequest.getSort());
         assertEquals(paginationRequest.getSortDirection(), capturedPaginationRequest.getSortDirection());
     }
+
+    @Test
+    void updateItemSuccessTest() throws Exception {
+        AddStockRequest addStockRequest = new AddStockRequest(1L, 10);
+        AddStockResponse addStockResponse = new AddStockResponse(item.getName(), item.getAmount());
+
+        when(itemService.addStock(addStockRequest.getId(), addStockRequest.getQuantity())).thenReturn(item);
+
+        mockMvc.perform(patch("/Item")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": \"1\", \"quantity\": \"10\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemName").value(addStockResponse.getItemName()))
+                .andExpect(jsonPath("$.quantity").value(addStockResponse.getQuantity()))
+                .andDo(print());
+    }
+
 }

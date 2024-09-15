@@ -65,18 +65,20 @@ public class ControllerAdvisor {
                 LocalDateTime.now()
         ));
     }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException e) {
-        return ResponseEntity.badRequest().body(new ExceptionResponse(
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(
                 String.format(Constants.NOT_FOUND_EXCEPTION_MESSAGE, e.getMessage()),
                 HttpStatus.NOT_FOUND.toString(),
                 LocalDateTime.now()
         ));
     }
+
     @ExceptionHandler(NotNegativeException.class)
     public ResponseEntity<ExceptionResponse> handleNotNegativeException(NotNegativeException e){
         return ResponseEntity.badRequest().body(new ExceptionResponse(
-                String.format(DomainConstants.QUANTITY_NOT_NEGATIVE),
+                DomainConstants.QUANTITY_NOT_NEGATIVE,
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now()
         ));

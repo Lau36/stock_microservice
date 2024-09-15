@@ -190,6 +190,45 @@ import static org.mockito.Mockito.*;
          verify(itemPersistencePort, times(1)).listAllItemsPaginated(paginationRequest);
          assertEquals(paginatedItems, result);
      }
+     @Test
+     void TestAddStockSuccess() {
+         Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
+         when(itemPersistencePort.findById(1L)).thenReturn(Optional.of(item));
+         when(itemPersistencePort.addStock(1L, 5)).thenReturn(item);
+
+         Item result = itemPersistencePort.addStock(1L, 5);
+
+         assertNotNull(result);
+         verify(itemPersistencePort, times(1)).addStock(1L, 5);
+     }
+
+     @Test
+     void TestAddStockNullId() {
+         Exception exception = assertThrows(NotNullException.class, () -> itemUseCase.addStock(null, 5));
+         assertEquals(DomainConstants.FIELD_NOT_NULL, exception.getMessage());
+     }
+
+     @Test
+     void testAddStockNullQuantity() {
+         Exception exception = assertThrows(NotNullException.class, () -> itemUseCase.addStock(1L, null));
+         assertEquals(DomainConstants.FIELD_NOT_NULL, exception.getMessage());
+     }
+
+     @Test
+     void testAddStockNegativeQuantity() {
+         Exception exception = assertThrows(NotNegativeException.class, () -> itemUseCase.addStock(1L, -5));
+         assertEquals(DomainConstants.QUANTITY_NOT_NEGATIVE, exception.getMessage());
+     }
+
+     @Test
+     void testAddStockItemNotFound() {
+         when(itemPersistencePort.findById(1L)).thenReturn(Optional.empty());
+
+         Exception exception = assertThrows(NotFoundException.class, () -> itemUseCase.addStock(1L, 5));
+         assertEquals(DomainConstants.ITEM_NOT_FOUND, exception.getMessage());
+     }
+
+
 
 
 

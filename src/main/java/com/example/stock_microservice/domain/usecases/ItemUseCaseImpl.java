@@ -78,6 +78,9 @@ public class ItemUseCaseImpl implements IItemUseCase {
         if(quantity < 0){
             throw new NotNegativeException(DomainConstants.QUANTITY_NOT_NEGATIVE);
         }
+        if(itemPersistencePort.findById(id).isEmpty()){
+            throw new NotFoundException(DomainConstants.ITEM_NOT_FOUND);
+        }
         return itemPersistencePort.addStock(id, quantity);
     }
 
