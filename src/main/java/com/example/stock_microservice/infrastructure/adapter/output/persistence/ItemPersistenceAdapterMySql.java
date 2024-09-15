@@ -67,12 +67,25 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
         }
         if(paginationRequest.getSort().equalsIgnoreCase("itemName")){
             sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), "name");
-
         }
         Pageable pageable = PageRequest.of(paginationRequest.getPage(),paginationRequest.getSize(), sort);
         Page<ItemEntity> itemEntities = itemRepository.findAll(pageable);
         List<Item> itemsList = itemEntities.stream().map(itemMapper::toItem).toList();
         return new Paginated<>(itemsList,itemEntities.getNumber(),itemEntities.getTotalPages(),itemEntities.getTotalElements());
+    }
+
+    @Override
+    public Item addStock(Long id, Integer quantity) {
+        ItemEntity item = itemRepository.findById(id).orElseThrow();
+        item.setAmount(item.getAmount() + quantity);
+        ItemEntity newItem = itemRepository.save(item);
+        return itemMapper.toItem(newItem);
+    }
+
+    @Override
+    public Optional<Item> findById(Long id) {
+        Optional<ItemEntity> itemEntity = itemRepository.findById(id);
+        return itemEntity.map(itemMapper::toItem);
     }
 
 }

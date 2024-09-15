@@ -76,4 +76,12 @@ class ItemServiceTest {
         verify(itemUseCase, times(1)).getItems(paginationRequest);
         assertEquals(paginatedItems, result);
     }
+
+    @Test
+    void testAddStock(){
+        when(itemUseCase.addStock(1L,1)).thenReturn(item);
+        Item itemUpdated = itemService.addStock(1L,1);
+        assertEquals(item, itemUpdated);
+        verify(itemUseCase, times(1)).addStock(1L,1);
+    }
 }

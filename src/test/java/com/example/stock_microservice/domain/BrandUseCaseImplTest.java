@@ -69,6 +69,7 @@ class BrandUseCaseImplTest {
 
         verify(brandPersistencePort, never()).save(any(Brand.class));
     }
+
     @Test
     void testCreateBrand_shouldThrowEmptyFieldException_whenDescriptionIsEmpty() {
         Brand brand1 = new Brand(1L,"BrandTest1", "");

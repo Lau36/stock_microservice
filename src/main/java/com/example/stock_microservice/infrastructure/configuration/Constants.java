@@ -13,6 +13,4 @@ public class Constants {
     public static final String CATEGORIES_NULL_MESSAGE ="%s no puede ser nulo";
     public static final String DUPLICATED_CATEGORIES_MESSAGE ="%s";
     public static final String NOT_FOUND_EXCEPTION_MESSAGE = "%s";
-
-
 }

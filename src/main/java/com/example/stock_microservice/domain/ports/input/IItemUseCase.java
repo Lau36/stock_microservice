@@ -7,4 +7,5 @@ import com.example.stock_microservice.domain.utils.PaginationRequest;
 public interface IItemUseCase {
     Item createItem(Item item);
     Paginated<Item> getItems(PaginationRequest paginationRequest);
+    Item addStock(Long id, Integer quantity);
 }
