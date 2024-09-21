@@ -78,10 +78,28 @@ public class ItemUseCaseImpl implements IItemUseCase {
         if(quantity < 0){
             throw new NotNegativeException(DomainConstants.QUANTITY_NOT_NEGATIVE);
         }
+        itemExist(id);
+        return itemPersistencePort.addStock(id, quantity);
+    }
+
+    @Override
+    public Boolean isInStock(Long id, Integer quantity) {
+        Item item =  itemPersistencePort.findById(id).orElseThrow(
+                () -> new NotFoundException(DomainConstants.ITEM_NOT_FOUND)
+        );
+        return item.getAmount() >= quantity;
+    }
+
+    @Override
+    public List<Long> getAllCategoriesByItemId(Long id) {
+        itemExist(id);
+        return itemPersistencePort.getAllCategoriesByItemId(id);
+    }
+
+    private void itemExist(Long id){
         if(itemPersistencePort.findById(id).isEmpty()){
             throw new NotFoundException(DomainConstants.ITEM_NOT_FOUND);
         }
-        return itemPersistencePort.addStock(id, quantity);
     }
 
 }

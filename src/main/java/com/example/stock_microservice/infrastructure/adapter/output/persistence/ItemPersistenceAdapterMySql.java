@@ -88,4 +88,10 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
         return itemEntity.map(itemMapper::toItem);
     }
 
+    @Override
+    public List<Long> getAllCategoriesByItemId(Long id) {
+        ItemEntity itemEntity = itemRepository.findById(id).orElseThrow();
+        return itemEntity.getCategories().stream().map(CategoryEntity::getId).toList();
+    }
+
 }

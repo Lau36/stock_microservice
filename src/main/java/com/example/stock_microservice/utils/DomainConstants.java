@@ -22,4 +22,5 @@ public class DomainConstants {
     public static final String FIELD_NOT_NULL = "El campo no puede ser nulo";
     public static final String QUANTITY_NOT_NEGATIVE ="El valor no puede ser negativo";
     public static final String ITEM_NOT_FOUND = "El item no fue encontrado";
+    public static final String NOT_IN_STOCK_MESSAGE = "No hay stock para esa catidad";
 }

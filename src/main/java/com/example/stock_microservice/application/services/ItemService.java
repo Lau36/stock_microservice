@@ -5,6 +5,8 @@ import com.example.stock_microservice.domain.ports.input.IItemUseCase;
 import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
 
+import java.util.List;
+
 public class ItemService implements IItemUseCase {
     private final IItemUseCase itemUseCase;
 
@@ -25,5 +27,15 @@ public class ItemService implements IItemUseCase {
     @Override
     public Item addStock(Long id, Integer quantity) {
         return itemUseCase.addStock(id, quantity);
+    }
+
+    @Override
+    public Boolean isInStock(Long id, Integer quantity) {
+        return itemUseCase.isInStock(id, quantity);
+    }
+
+    @Override
+    public List<Long> getAllCategoriesByItemId(Long id) {
+        return itemUseCase.getAllCategoriesByItemId(id);
     }
 }
