@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/Item").hasAnyAuthority(Roles.ROLE_ADMIN, Roles.ROLE_AUX_BODEGA)
                         .requestMatchers(HttpMethod.GET,"/Item/InStock ").hasAnyAuthority(Roles.ROLE_CUSTOMER)
                         .requestMatchers(HttpMethod.GET,"/Item/Categories").hasAnyAuthority(Roles.ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.GET,"/Item/ItemsPaginated/").hasAnyAuthority(Roles.ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.GET,"/Item/Prices").hasAnyAuthority(Roles.ROLE_CUSTOMER)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

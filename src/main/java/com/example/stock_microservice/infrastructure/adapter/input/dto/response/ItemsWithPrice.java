@@ -3,19 +3,15 @@ package com.example.stock_microservice.infrastructure.adapter.input.dto.response
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemResponseDTO {
+public class ItemsWithPrice {
     private Long id;
-    private String name;
-    private String description;
-    private Integer quantityInStock;
     private BigDecimal price;
-    private List<NameIdDTO> categories;
-    private NameIdDTO brand;
 }

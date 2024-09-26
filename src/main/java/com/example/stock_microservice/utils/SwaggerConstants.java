@@ -39,6 +39,19 @@ public class SwaggerConstants {
     public static final String SORT_PARAM_DESCRIPTION = "Property to sort by";
     public static final String SORT_DIRECTION_PARAM_DESCRIPTION = "Sort direction (asc or desc)";
     public static final String INVALID_INPUT = "Invalid input";
+    public static final String BEARER = "bearerAuth";
+    public static final String OK = "Todo bien";
+
+    public static final String GET_CATEGORIES = "Obetener las categorias asociadas a un articulo";
+    public static final String GET_CATEGORIES_DESCRIPTION = "Por medio del id de un articulo se obtiene la lista de categorias que están asociadas a ese articulo";
+
+    public static final String GET_PRICES = "Obetener los precios de los articulos";
+    public static final String GET_PRICES_DESCRIPTION = "Por medio de una lista de items se obtienen los precios asociados a esos items";
+
+    public static final String GET_ITEMS_PAGINATED = "Obetener los articulos paginados";
+    public static final String GET_ITEMS_PAGINATED_DESCRIPTION = "Se pueden paginar, ordenar y filtrar los articulos";
+
+
 
 
 

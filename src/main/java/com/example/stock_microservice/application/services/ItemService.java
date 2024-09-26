@@ -4,6 +4,7 @@ import com.example.stock_microservice.domain.models.Item;
 import com.example.stock_microservice.domain.ports.input.IItemUseCase;
 import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.PaginationRequestItems;
 
 import java.util.List;
 
@@ -38,4 +39,17 @@ public class ItemService implements IItemUseCase {
     public List<Long> getAllCategoriesByItemId(Long id) {
         return itemUseCase.getAllCategoriesByItemId(id);
     }
+
+    @Override
+    public Paginated<Item> getItemsPaginated(PaginationRequestItems paginationRequestItems) {
+        return itemUseCase.getItemsPaginated(paginationRequestItems);
+    }
+
+
+    @Override
+    public List<Item> getItemsWithPrice(List<Long> ids) {
+        return itemUseCase.getItemsWithPrice(ids);
+    }
+
+
 }

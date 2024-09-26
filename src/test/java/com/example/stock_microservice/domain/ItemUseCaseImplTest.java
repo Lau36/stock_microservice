@@ -8,9 +8,7 @@ import com.example.stock_microservice.domain.ports.output.IItemPersistencePort;
 import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
 import com.example.stock_microservice.domain.usecases.ItemUseCaseImpl;
-import com.example.stock_microservice.domain.utils.Paginated;
-import com.example.stock_microservice.domain.utils.PaginationRequest;
-import com.example.stock_microservice.domain.utils.SortDirection;
+import com.example.stock_microservice.domain.utils.*;
 import com.example.stock_microservice.utils.DomainConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -190,6 +188,8 @@ import static org.mockito.Mockito.*;
          verify(itemPersistencePort, times(1)).listAllItemsPaginated(paginationRequest);
          assertEquals(paginatedItems, result);
      }
+
+
      @Test
      void TestAddStockSuccess() {
          Item item = new Item(1L, "Item", "Description", 10, new BigDecimal("19.99"), categories, brand);
@@ -227,6 +227,127 @@ import static org.mockito.Mockito.*;
          Exception exception = assertThrows(NotFoundException.class, () -> itemUseCase.addStock(1L, 5));
          assertEquals(DomainConstants.ITEM_NOT_FOUND, exception.getMessage());
      }
+
+     @Test
+     void testIsInStock_ItemExists_EnoughStock() {
+         Long itemId = 1L;
+         Integer requestedQuantity = 5;
+         Item item = new Item(1L, "Item2", "Description2", 10, new BigDecimal("19.99"), categories, brand);
+
+         when(itemPersistencePort.findById(itemId)).thenReturn(Optional.of(item));
+
+         Boolean isInStock = itemUseCase.isInStock(itemId, requestedQuantity);
+
+         assertTrue(isInStock);
+
+         verify(itemPersistencePort, times(1)).findById(itemId);
+     }
+
+     @Test
+     void testIsInStock_ItemExists_NotEnoughStock() {
+         Long itemId = 1L;
+         Integer requestedQuantity = 15;
+         Item item = new Item(1L, "Item2", "Description2", 0, new BigDecimal("19.99"), categories, brand);
+
+         when(itemPersistencePort.findById(itemId)).thenReturn(Optional.of(item));
+
+         Boolean isInStock = itemUseCase.isInStock(itemId, requestedQuantity);
+
+         assertFalse(isInStock);
+
+         verify(itemPersistencePort, times(1)).findById(itemId);
+     }
+
+
+     @Test
+     void testIsInStock_ItemDoesNotExist() {
+         Long itemId = 1L;
+         Integer requestedQuantity = 5;
+
+         when(itemPersistencePort.findById(itemId)).thenReturn(Optional.empty());
+
+         NotFoundException exception = assertThrows(NotFoundException.class, () -> itemUseCase.isInStock(itemId, requestedQuantity));
+
+         assertEquals(DomainConstants.ITEM_NOT_FOUND, exception.getMessage());
+
+         verify(itemPersistencePort, times(1)).findById(itemId);
+     }
+
+     @Test
+     void testGetAllCategoriesByItemId_ItemExists() {
+         Long itemId = 1L;
+         List<Long> expectedCategories = Arrays.asList(1L, 2L, 3L);
+         Item item = new Item(1L, "Item2", "Description2", 10, new BigDecimal("19.99"), categories, brand);
+
+         when(itemPersistencePort.findById(itemId)).thenReturn(Optional.of(item));
+         when(itemPersistencePort.getAllCategoriesByItemId(itemId)).thenReturn(expectedCategories);
+
+         List<Long> itemsCategories = itemUseCase.getAllCategoriesByItemId(itemId);
+
+         assertEquals(expectedCategories, itemsCategories);
+         verify(itemPersistencePort).getAllCategoriesByItemId(itemId);
+     }
+
+     @Test
+     void testGetAllCategoriesByItemId_ItemDoesNotExist() {
+         Long itemId = 1L;
+
+         when(itemPersistencePort.findById(itemId)).thenReturn(Optional.empty());
+
+         NotFoundException exception = assertThrows(NotFoundException.class, () -> itemUseCase.getAllCategoriesByItemId(itemId));
+
+         assertEquals(DomainConstants.ITEM_NOT_FOUND, exception.getMessage());
+         verify(itemPersistencePort).findById(itemId);
+     }
+
+     @Test
+     void testGetItemsPaginated() {
+         List<Long> itemsId =List.of(1L, 2L);
+         PaginationRequestItems request = new PaginationRequestItems(1, 10, SortDirection.ASC, Filter.CATEGORYNAME, "Electronicos",itemsId);
+         List<Item> items = List.of(new Item(1L, "Item1", "Description1", 10, new BigDecimal("19.99"), categories, brand),
+                            new Item(2L, "Item2", "Description2", 10, new BigDecimal("19.99"), categories, brand));
+         Paginated<Item> expectedPaginatedItems = new Paginated<>(items, 0, 1, 2);
+
+         when(itemPersistencePort.getItemsPaginated(request)).thenReturn(expectedPaginatedItems);
+
+         Paginated<Item> result = itemUseCase.getItemsPaginated(request);
+
+         assertEquals(expectedPaginatedItems, result);
+         verify(itemPersistencePort).getItemsPaginated(request);
+     }
+
+     @Test
+     void testItemExist_ItemDoesNotExist() {
+         Long itemId = 1L;
+
+         when(itemPersistencePort.findById(itemId)).thenReturn(Optional.empty());
+
+         NotFoundException exception = assertThrows(NotFoundException.class, () -> itemUseCase.getAllCategoriesByItemId(itemId));
+
+         assertEquals(DomainConstants.ITEM_NOT_FOUND, exception.getMessage());
+         verify(itemPersistencePort, times(1)).findById(itemId);
+     }
+
+     @Test
+     void testGetItemsWithPrice() {
+         List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+         List<Item> expectedItemsWithPrice = Arrays.asList(
+                 new Item(1L, "Item1", "Description1", 10, new BigDecimal("19.99"), categories, brand),
+                 new Item(2L, "Item2", "Description2", 10, new BigDecimal("19.99"), categories, brand),
+                 new Item(3L, "Item3", "Description3", 10, new BigDecimal("19.99"), categories, brand));
+
+         when(itemPersistencePort.getItemsWithPrice(itemIds)).thenReturn(expectedItemsWithPrice);
+
+         List<Item> result = itemUseCase.getItemsWithPrice(itemIds);
+
+         assertEquals(expectedItemsWithPrice, result);
+         verify(itemPersistencePort).getItemsWithPrice(itemIds);
+     }
+
+
+
+
+
 
 
 

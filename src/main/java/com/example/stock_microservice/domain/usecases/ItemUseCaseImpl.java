@@ -9,6 +9,7 @@ import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
 import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.PaginationRequestItems;
 import com.example.stock_microservice.utils.DomainConstants;
 
 import java.util.HashSet;
@@ -94,6 +95,16 @@ public class ItemUseCaseImpl implements IItemUseCase {
     public List<Long> getAllCategoriesByItemId(Long id) {
         itemExist(id);
         return itemPersistencePort.getAllCategoriesByItemId(id);
+    }
+
+    @Override
+    public Paginated<Item> getItemsPaginated(PaginationRequestItems paginationRequestItems) {
+        return itemPersistencePort.getItemsPaginated(paginationRequestItems);
+    }
+
+    @Override
+    public List<Item> getItemsWithPrice(List<Long> ids) {
+        return itemPersistencePort.getItemsWithPrice(ids);
     }
 
     private void itemExist(Long id){

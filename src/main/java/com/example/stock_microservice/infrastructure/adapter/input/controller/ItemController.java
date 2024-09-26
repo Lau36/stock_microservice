@@ -3,11 +3,10 @@ package com.example.stock_microservice.infrastructure.adapter.input.controller;
 
 import com.example.stock_microservice.application.services.ItemService;
 import com.example.stock_microservice.domain.models.Item;
-import com.example.stock_microservice.domain.utils.Paginated;
-import com.example.stock_microservice.domain.utils.PaginationRequest;
-import com.example.stock_microservice.domain.utils.SortDirection;
+import com.example.stock_microservice.domain.utils.*;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddItemRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddStockRequest;
+import com.example.stock_microservice.infrastructure.adapter.input.dto.request.ItemsRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.*;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemResponseMapper;
@@ -57,7 +56,7 @@ public class ItemController {
 
     @Operation(summary = SwaggerConstants.GET_ALL_ITEMS_PAGINATED_SUMMARY,
             description = SwaggerConstants.GET_ALL_ITEMS_PAGINATED_DESCRIPTION,
-            security = @SecurityRequirement(name = "bearerAuth"))
+            security = @SecurityRequirement(name = SwaggerConstants.BEARER))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = SwaggerConstants.ITEM_LIST_RESPONSE,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginatedItemResponse.class))),
@@ -82,7 +81,7 @@ public class ItemController {
 
     @Operation(summary = SwaggerConstants.UPDATE_ITEM_SUMMARY,
             description = SwaggerConstants.UPDATE_ITEM_DESCRIPTION,
-            security = @SecurityRequirement(name = "bearerAuth"))
+            security = @SecurityRequirement(name = SwaggerConstants.BEARER))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = SwaggerConstants.ITEM_UPDATED_RESPONSE,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddStockResponse.class))),
@@ -95,13 +94,71 @@ public class ItemController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = SwaggerConstants.UPDATE_ITEM_SUMMARY,
+            description = SwaggerConstants.UPDATE_ITEM_DESCRIPTION,
+            security = @SecurityRequirement(name = SwaggerConstants.BEARER))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = SwaggerConstants.ITEM_UPDATED_RESPONSE,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddStockResponse.class))),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.INVALID_INPUT)
+    })
     @GetMapping("/InStock ")
     public ResponseEntity<Boolean> isInStock(@RequestParam int itemId, @RequestParam int quantity) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.isInStock((long) itemId, quantity));
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+
+    @Operation(summary = SwaggerConstants.GET_CATEGORIES,
+            description = SwaggerConstants.GET_CATEGORIES_DESCRIPTION,
+            security = @SecurityRequirement(name = SwaggerConstants.BEARER))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = SwaggerConstants.OK,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddStockResponse.class))),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.INVALID_INPUT)
+    })
     @GetMapping("/Categories")
     public ResponseEntity<List<Long>> getCategoriesByItemId(@RequestParam int itemId) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.getAllCategoriesByItemId((long) itemId));
+    }
+
+    @Operation(summary = SwaggerConstants.GET_ITEMS_PAGINATED,
+            description = SwaggerConstants.GET_ITEMS_PAGINATED_DESCRIPTION,
+            security = @SecurityRequirement(name = SwaggerConstants.BEARER))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = SwaggerConstants.OK,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddStockResponse.class))),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.INVALID_INPUT)
+    })
+    @GetMapping("/ItemsPaginated/")
+    public ResponseEntity<PaginatedItemResponse> getAllItemsPaginated(@RequestParam int page,
+                                                                      @RequestParam int size,
+                                                                      @RequestParam String sortDirection,
+                                                                      @RequestParam String filter,
+                                                                      @RequestParam String filterName,
+                                                                      @RequestBody ItemsRequest itemsRequest){
+
+        List<Long> ids = itemsRequest.getItemsId().stream().map(Integer::longValue).toList();
+        PaginationRequestItems request = new PaginationRequestItems(page,size, SortDirection.valueOf(sortDirection.toUpperCase()), Filter.valueOf(filter.toUpperCase()), filterName, ids);
+        Paginated<Item> paginatedItems = itemService.getItemsPaginated(request);
+        PaginatedItemResponse response = paginatedItemResponseMapper.toPaginatedItemResponse(paginatedItems);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @Operation(summary = SwaggerConstants.GET_PRICES,
+            description = SwaggerConstants.GET_PRICES_DESCRIPTION,
+            security = @SecurityRequirement(name = SwaggerConstants.BEARER))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = SwaggerConstants.OK,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddStockResponse.class))),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.INVALID_INPUT)
+    })
+    @GetMapping("/Prices")
+    public ResponseEntity<List<ItemsWithPrice>> getItemsWithPrice(@RequestBody ItemsRequest itemsRequest){
+        List<Long> ids = itemsRequest.getItemsId().stream().map(Integer::longValue).toList();
+        List<Item> items = itemService.getItemsWithPrice(ids);
+        List<ItemsWithPrice> itemsWithPrices = itemResponseMapper.toItemsWithPrice(items);
+        return ResponseEntity.status(HttpStatus.OK).body(itemsWithPrices);
     }
 }
