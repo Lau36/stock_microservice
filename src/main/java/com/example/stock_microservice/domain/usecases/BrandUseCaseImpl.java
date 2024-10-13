@@ -34,7 +34,7 @@ public class BrandUseCaseImpl implements IBrandUseCase {
             throw new MaxLengthExceededException(DomainConstants.Field.DESCRIPCION.toString(), 120);
         }
         if(brandPersistencePort.findByName(brand.getName()).isPresent()){
-            throw new AlreadyExistsException("The field '" + brand.getName() + "' already exists");
+            throw new AlreadyExistsException(brand.getName());
         }
         return brandPersistencePort.save(brand);
     }

@@ -38,7 +38,7 @@ public class CategoryUseCaseImplement implements ICategoryUseCases {
         }
 
         if(categoryPersistencePort.findByCategoryName(category.getCategoryName()).isPresent()){
-            throw new AlreadyExistsException("The field '" + category.getCategoryName() + "' already exists");
+            throw new AlreadyExistsException(category.getCategoryName());
         }
         return categoryPersistencePort.save(category);
     }
