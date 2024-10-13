@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/Item/Categories").hasAnyAuthority(Roles.ROLE_CUSTOMER)
                         .requestMatchers(HttpMethod.GET,"/Item/ItemsPaginated/").hasAnyAuthority(Roles.ROLE_CUSTOMER)
                         .requestMatchers(HttpMethod.GET,"/Item/Prices").hasAnyAuthority(Roles.ROLE_CUSTOMER)
+                        .requestMatchers(HttpMethod.POST,"/Item/SubtractStock").hasAnyAuthority(Roles.ROLE_CUSTOMER)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

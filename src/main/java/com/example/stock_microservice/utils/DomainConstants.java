@@ -25,4 +25,5 @@ public class DomainConstants {
     public static final String NOT_IN_STOCK_MESSAGE = "No hay stock para esa catidad";
     public static final String SORT = "name";
     public static final String COMMA = ",";
+    public static final String ITEM_UPDATED = "Se actualizó la cantidad de stock del articulo";
 }

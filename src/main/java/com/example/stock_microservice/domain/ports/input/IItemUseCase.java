@@ -15,4 +15,5 @@ public interface IItemUseCase {
     List<Long> getAllCategoriesByItemId(Long id);
     Paginated<Item> getItemsPaginated(PaginationRequestItems paginationRequestItems);
     List<Item> getItemsWithPrice(List<Long> ids);
+    String subtractStock(Long id, Integer quantity);
 }

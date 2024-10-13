@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/brands")
 @RequiredArgsConstructor
+@CrossOrigin(origins="http://localhost:4200")
 public class BrandController {
 
     private final BrandService brandService;

@@ -7,7 +7,7 @@ public class Item {
     private final Long id;
     private final String name;
     private final String description;
-    private final Integer amount;
+    private Integer amount;
     private final BigDecimal price;
     private final List<Category> categories;
     private final Brand brand;
@@ -48,6 +48,10 @@ public class Item {
 
     public Brand getBrand() {
         return brand;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 }
 

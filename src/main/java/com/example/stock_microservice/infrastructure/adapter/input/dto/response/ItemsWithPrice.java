@@ -13,5 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ItemsWithPrice {
     private Long id;
+    private String name;
     private BigDecimal price;
 }

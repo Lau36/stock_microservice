@@ -27,7 +27,7 @@ public class ControllerAdvisor {
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(AlreadyExistsException e) {
         return ResponseEntity.badRequest().body(new ExceptionResponse(
-                String.format(Constants.ALREADY_EXISTS_NAME_EXCEPTION_MESSAGE, e.getMessage()),
+                "Ya existe una categoría con ese nombre",
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now()));
     }

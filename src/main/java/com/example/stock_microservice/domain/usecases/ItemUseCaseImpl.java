@@ -85,9 +85,7 @@ public class ItemUseCaseImpl implements IItemUseCase {
 
     @Override
     public Boolean isInStock(Long id, Integer quantity) {
-        Item item =  itemPersistencePort.findById(id).orElseThrow(
-                () -> new NotFoundException(DomainConstants.ITEM_NOT_FOUND)
-        );
+        Item item = getItem(id);
         return item.getAmount() >= quantity;
     }
 
@@ -105,6 +103,20 @@ public class ItemUseCaseImpl implements IItemUseCase {
     @Override
     public List<Item> getItemsWithPrice(List<Long> ids) {
         return itemPersistencePort.getItemsWithPrice(ids);
+    }
+
+    @Override
+    public String subtractStock(Long id, Integer quantity) {
+        Item item = getItem(id);
+        item.setAmount(item.getAmount() - quantity);
+        itemPersistencePort.saveArticle(item);
+        return DomainConstants.ITEM_UPDATED;
+    }
+
+    private Item getItem(Long itemId){
+        return itemPersistencePort.findById(itemId).orElseThrow(
+                () -> new NotFoundException(DomainConstants.ITEM_NOT_FOUND)
+        );
     }
 
     private void itemExist(Long id){

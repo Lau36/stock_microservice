@@ -7,6 +7,7 @@ import com.example.stock_microservice.domain.utils.*;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddItemRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.AddStockRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.request.ItemsRequest;
+import com.example.stock_microservice.infrastructure.adapter.input.dto.request.SubtractStockRequest;
 import com.example.stock_microservice.infrastructure.adapter.input.dto.response.*;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.AddItemMapper;
 import com.example.stock_microservice.infrastructure.adapter.input.mapper.ItemResponseMapper;
@@ -102,7 +103,7 @@ public class ItemController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddStockResponse.class))),
             @ApiResponse(responseCode = "400", description = SwaggerConstants.INVALID_INPUT)
     })
-    @GetMapping("/InStock ")
+    @GetMapping("/InStock")
     public ResponseEntity<Boolean> isInStock(@RequestParam int itemId, @RequestParam int quantity) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.isInStock((long) itemId, quantity));
     }
@@ -160,5 +161,10 @@ public class ItemController {
         List<Item> items = itemService.getItemsWithPrice(ids);
         List<ItemsWithPrice> itemsWithPrices = itemResponseMapper.toItemsWithPrice(items);
         return ResponseEntity.status(HttpStatus.OK).body(itemsWithPrices);
+    }
+
+    @PostMapping("/SubtractStock")
+    public ResponseEntity<String> subtractStock(@RequestBody SubtractStockRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.subtractStock((long) request.getItemId(), request.getQuantity()));
     }
 }

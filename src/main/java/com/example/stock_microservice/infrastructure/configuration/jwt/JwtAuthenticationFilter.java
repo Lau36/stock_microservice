@@ -22,7 +22,7 @@ import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final String JWT_SECRET = System.getenv(Constants.TOKEN_KEY);
+    private static final String JWT_SECRET = System.getenv("JWT_SECRET");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

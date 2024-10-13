@@ -45,10 +45,14 @@ public class ItemService implements IItemUseCase {
         return itemUseCase.getItemsPaginated(paginationRequestItems);
     }
 
-
     @Override
     public List<Item> getItemsWithPrice(List<Long> ids) {
         return itemUseCase.getItemsWithPrice(ids);
+    }
+
+    @Override
+    public String subtractStock(Long id, Integer quantity) {
+        return itemUseCase.subtractStock(id, quantity);
     }
 
 
