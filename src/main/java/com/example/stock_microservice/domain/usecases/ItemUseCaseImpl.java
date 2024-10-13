@@ -9,6 +9,7 @@ import com.example.stock_microservice.domain.ports.output.IBrandPersistencePort;
 import com.example.stock_microservice.domain.ports.output.ICategoryPersistencePort;
 import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.PaginationRequestItems;
 import com.example.stock_microservice.utils.DomainConstants;
 
 import java.util.HashSet;
@@ -84,9 +85,7 @@ public class ItemUseCaseImpl implements IItemUseCase {
 
     @Override
     public Boolean isInStock(Long id, Integer quantity) {
-        Item item =  itemPersistencePort.findById(id).orElseThrow(
-                () -> new NotFoundException(DomainConstants.ITEM_NOT_FOUND)
-        );
+        Item item = getItem(id);
         return item.getAmount() >= quantity;
     }
 
@@ -94,6 +93,30 @@ public class ItemUseCaseImpl implements IItemUseCase {
     public List<Long> getAllCategoriesByItemId(Long id) {
         itemExist(id);
         return itemPersistencePort.getAllCategoriesByItemId(id);
+    }
+
+    @Override
+    public Paginated<Item> getItemsPaginated(PaginationRequestItems paginationRequestItems) {
+        return itemPersistencePort.getItemsPaginated(paginationRequestItems);
+    }
+
+    @Override
+    public List<Item> getItemsWithPrice(List<Long> ids) {
+        return itemPersistencePort.getItemsWithPrice(ids);
+    }
+
+    @Override
+    public String subtractStock(Long id, Integer quantity) {
+        Item item = getItem(id);
+        item.setAmount(item.getAmount() - quantity);
+        itemPersistencePort.saveArticle(item);
+        return DomainConstants.ITEM_UPDATED;
+    }
+
+    private Item getItem(Long itemId){
+        return itemPersistencePort.findById(itemId).orElseThrow(
+                () -> new NotFoundException(DomainConstants.ITEM_NOT_FOUND)
+        );
     }
 
     private void itemExist(Long id){

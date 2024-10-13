@@ -5,9 +5,7 @@ import com.example.stock_microservice.domain.models.Brand;
 import com.example.stock_microservice.domain.models.Category;
 import com.example.stock_microservice.domain.models.Item;
 import com.example.stock_microservice.domain.ports.input.IItemUseCase;
-import com.example.stock_microservice.domain.utils.Paginated;
-import com.example.stock_microservice.domain.utils.PaginationRequest;
-import com.example.stock_microservice.domain.utils.SortDirection;
+import com.example.stock_microservice.domain.utils.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -84,4 +83,39 @@ class ItemServiceTest {
         assertEquals(item, itemUpdated);
         verify(itemUseCase, times(1)).addStock(1L,1);
     }
+
+    @Test
+    void testIsInStock() {
+        Long itemId = 1L;
+        Integer quantity = 5;
+        when(itemUseCase.isInStock(itemId, quantity)).thenReturn(true);
+        Boolean result = itemService.isInStock(itemId, quantity);
+        assertTrue(result);
+        verify(itemUseCase, times(1)).isInStock(itemId, quantity);
+    }
+
+    @Test
+    void testGetAllCategoriesByItemId() {
+        Long itemId = 1L;
+        List<Long> expectedCategories = List.of(101L, 102L, 103L);
+        when(itemUseCase.getAllCategoriesByItemId(itemId)).thenReturn(expectedCategories);
+        List<Long> result = itemService.getAllCategoriesByItemId(itemId);
+        assertEquals(expectedCategories, result);
+        verify(itemUseCase, times(1)).getAllCategoriesByItemId(itemId);
+    }
+
+    @Test
+    void testGetItemsPaginated() {
+        List<Long> itemsId =List.of(1L, 2L);
+        PaginationRequestItems request = new PaginationRequestItems(1, 10, SortDirection.ASC, Filter.CATEGORYNAME, "Electronicos",itemsId);
+        List<Item> items = List.of(new Item(1L, "Item1", "Description1", 10, new BigDecimal("19.99"), null, null),
+                new Item(2L, "Item2", "Description2", 10, new BigDecimal("19.99"), null, null));
+        Paginated<Item> expectedPaginatedItems = new Paginated<>(items, 0, 1, 2);
+        when(itemUseCase.getItemsPaginated(request)).thenReturn(expectedPaginatedItems);
+        Paginated<Item> result = itemService.getItemsPaginated(request);
+        assertEquals(expectedPaginatedItems, result);
+        verify(itemUseCase, times(1)).getItemsPaginated(request);
+    }
+
+
 }

@@ -3,8 +3,10 @@ package com.example.stock_microservice.infrastructure.adapter.output.persistence
 import com.example.stock_microservice.domain.execptions.NotFoundException;
 import com.example.stock_microservice.domain.models.Item;
 import com.example.stock_microservice.domain.ports.output.IItemPersistencePort;
+import com.example.stock_microservice.domain.utils.Filter;
 import com.example.stock_microservice.domain.utils.Paginated;
 import com.example.stock_microservice.domain.utils.PaginationRequest;
+import com.example.stock_microservice.domain.utils.PaginationRequestItems;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.BrandEntity;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.CategoryEntity;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.entity.ItemEntity;
@@ -12,6 +14,7 @@ import com.example.stock_microservice.infrastructure.adapter.output.persistence.
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.BrandRepository;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.CategoryRepository;
 import com.example.stock_microservice.infrastructure.adapter.output.persistence.repository.ItemRepository;
+import com.example.stock_microservice.utils.DomainConstants;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +23,8 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
+
+
 
 @AllArgsConstructor
 
@@ -92,6 +97,42 @@ public class ItemPersistenceAdapterMySql implements IItemPersistencePort {
     public List<Long> getAllCategoriesByItemId(Long id) {
         ItemEntity itemEntity = itemRepository.findById(id).orElseThrow();
         return itemEntity.getCategories().stream().map(CategoryEntity::getId).toList();
+    }
+
+    @Override
+    public Paginated<Item> getItemsPaginated(PaginationRequestItems paginationRequestItems) {
+        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequestItems.getSortDirection().name()), DomainConstants.SORT);
+
+        Pageable pageable = PageRequest.of(paginationRequestItems.getPage(),paginationRequestItems.getSize(), sort);
+
+        Page<ItemEntity> itemEntities = getPage(paginationRequestItems, pageable);
+        List<Item> itemsList = itemEntities.stream().map(itemMapper::toItem).toList();
+        return new Paginated<>(itemsList,itemEntities.getNumber(),itemEntities.getTotalPages(),itemEntities.getTotalElements());
+    }
+
+    @Override
+    public List<Item> getItemsWithPrice(List<Long> ids) {
+        return itemRepository.findAllByIdIn(ids).stream().map(itemMapper::toItem).toList();
+    }
+
+    private Page<ItemEntity> getPage(PaginationRequestItems paginationRequestItems, Pageable pageable){
+        if(paginationRequestItems.getFilter() == Filter.BRANDNAME){
+            return itemRepository.findAllByBrandAndIds(paginationRequestItems.getFilterName(), paginationRequestItems.getItemsId(), pageable);
+        }
+        if(paginationRequestItems.getFilter() == Filter.CATEGORYNAME){
+
+            return itemRepository.findAllByCategoryAndIds(paginationRequestItems.getFilterName(), paginationRequestItems.getItemsId(), pageable);
+        }
+        if(paginationRequestItems.getFilter() == Filter.BRANDANDCATEGORY){
+            String[] filters = paginationRequestItems.getFilterName().split(DomainConstants.COMMA);
+            String categoryName = filters[0];
+            String brandName = filters[1];
+            return itemRepository.findAllByCategoryNameAndBrandNameAndIds(categoryName, brandName, paginationRequestItems.getItemsId(), pageable);
+        }
+        else{
+            return itemRepository.findPaginatedByIdIn(paginationRequestItems.getItemsId(), pageable);
+        }
+
     }
 
 }

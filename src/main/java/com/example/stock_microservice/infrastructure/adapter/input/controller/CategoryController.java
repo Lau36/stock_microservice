@@ -29,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
+@CrossOrigin(origins="http://localhost:4200")
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryRequestMapper categoryRequestMapper;
@@ -42,6 +43,7 @@ public class CategoryController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryResponse.class))),
             @ApiResponse(responseCode = "400", description = SwaggerConstants.INVALID_INPUT)
     })
+
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody AddCategoryRequest addCategoryRequest){
         Category createdCategory = categoryService.createCategory(categoryRequestMapper.addRequestToCategory(addCategoryRequest));
